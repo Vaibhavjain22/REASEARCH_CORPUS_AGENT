@@ -1,0 +1,28 @@
+# Virtual environment
+venv/
+
+# API keys
+.env
+
+# Vector database
+chroma_db/
+
+# Dataset files
+arxiv_paper.csv
+arXiv_scientific dataset.csv
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

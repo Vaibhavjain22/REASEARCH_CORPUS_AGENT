@@ -1,0 +1,38 @@
+# ─────────────────────────────────────────
+# Research Corpus Agent — Requirements
+# ─────────────────────────────────────────
+ 
+# Core
+python-dotenv==1.0.1
+ 
+# LangChain
+langchain
+langchain-community
+langchain-core
+langchain-text-splitters
+langchain-chroma
+langchain-huggingface
+ 
+# Vector Database
+chromadb
+ 
+# Embeddings
+sentence-transformers
+ 
+# CrewAI
+crewai
+crewai-tools
+ 
+# LLM — Google Gemini
+langchain-google-genai
+google-generativeai
+ 
+# Data Processing
+pandas
+tqdm
+ 
+# Evaluation
+ragas
+ 
+# Utilities
+litellm
