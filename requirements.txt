@@ -12,8 +12,8 @@ langchain-core
 langchain-text-splitters
 langchain-chroma
 langchain-huggingface
- 
-# Vector Database
+
+# Vector Databases
 chromadb
  
 # Embeddings
