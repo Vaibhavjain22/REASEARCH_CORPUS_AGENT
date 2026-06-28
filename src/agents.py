@@ -21,7 +21,7 @@ planner = Agent(
               "research questions into searchable components.",
     llm=llm,
     tools=[],
-    verbose=True
+    verbose=False
 )
 
 retriever_agent = Agent(
@@ -32,7 +32,7 @@ retriever_agent = Agent(
               "academic papers from large databases.",
     tools=[vector_search_tool],
     llm=llm,
-    verbose=True
+    verbose=False
 )
 
 analyst = Agent(
@@ -44,7 +44,7 @@ analyst = Agent(
               "comparisons and trends.",
     llm=llm,
     tools=[],
-    verbose=True
+    verbose=False
 )
 
 critic = Agent(
@@ -56,7 +56,7 @@ critic = Agent(
               "claims are grounded in retrieved papers.",
     llm=llm,
     tools=[],
-    verbose=True
+    verbose=False
 )
 
 

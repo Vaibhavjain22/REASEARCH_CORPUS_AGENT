@@ -1,4 +1,4 @@
-# 🔬 Research Corpus Agent
+# 🔬 Research Corpus Agent(RAG-BASED)
 
 An intelligent multi-agent AI system that answers complex queries over a large corpus of ArXiv research papers using **CrewAI**, **ChromaDB**, and **Google Gemini**.
 
@@ -9,6 +9,7 @@ An intelligent multi-agent AI system that answers complex queries over a large c
 - [Project Overview](#project-overview)
 - [Dataset Description](#dataset-description)
 - [System Architecture](#system-architecture)
+- [Interactive Web UI](#interactive-web-ui)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Installation](#installation)
@@ -21,7 +22,7 @@ An intelligent multi-agent AI system that answers complex queries over a large c
 
 ## 📖 Project Overview
 
-The **Research Corpus Agent** is an AI-powered system designed to answer complex research questions over a large corpus of 136,000+ ArXiv scientific papers. The system uses a **multi-agent architecture** built with CrewAI where specialized agents collaborate to plan, retrieve, analyze, and validate answers.
+The **Research Corpus Agent** is an AI-powered system designed to answer complex research questions over a large corpus of 136,000+ ArXiv scientific papers. The system uses a **multi-agent architecture** built with CrewAI where specialized agents collaborate to plan, retrieve, analyze, and validate answers. It is supported by a rich, modern web interface for interactive search, custom paper ingestion, and performance visualization.
 
 ### Key Capabilities
 
@@ -30,6 +31,9 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 - ✅ **Multi-hop Queries** — Answer questions requiring multiple retrieval steps
 - ✅ **Comparisons** — Compare methodologies, models, and approaches
 - ✅ **Aggregations** — Identify trends and patterns across papers
+- ✅ **Interactive Dashboard** — Premium dark-themed UI built with FastAPI and Chart.js
+- ✅ **Paper Ingestion Hub** — Dynamically load and index new papers into ChromaDB
+- ✅ **Persistent History** — Sidebar showing past searches and response times
 
 ---
 
@@ -120,6 +124,17 @@ For detailed architecture see [ARCHITECTURE.md](ARCHITECTURE.md)
 
 ---
 
+## 🖥️ Interactive Web UI
+
+The project features a premium glassmorphic dark-theme Single Page Application (SPA) that acts as a cockpit for the multi-agent system:
+
+1. **Research Console**: Input research queries, select suggested query chips, and watch the agents execute visually through a status animation (Planner → Retriever → Analyst → Critic).
+2. **Paper Ingestion Hub**: Dynamically ingest custom research papers (Title, Authors, Category, Published Date, Abstract) directly into ChromaDB. The paper is parsed, chunked, embedded, and stored instantly.
+3. **Evaluation Dashboard**: Visualizes the system's performance using interactive Chart.js graphs, including Precision@K, Recall@K, keyword coverage, and category-wise performance breakdown.
+4. **History Sidebar**: Keeps track of previous queries, complete answers, and execution latency. Click any item to load its results instantly.
+
+---
+
 ## 🛠️ Tech Stack
 
 | Component | Technology |
@@ -131,6 +146,10 @@ For detailed architecture see [ARCHITECTURE.md](ARCHITECTURE.md)
 | **Embeddings** | sentence-transformers/all-MiniLM-L6-v2 |
 | **Data Loading** | LangChain CSVLoader |
 | **Text Splitting** | LangChain RecursiveCharacterTextSplitter |
+| **Web Server Framework** | FastAPI (backend) |
+| **Web Server Runner** | Uvicorn |
+| **Frontend Styling** | Vanilla CSS (Dark Premium Glassmorphic design) |
+| **Frontend Graphs** | Chart.js |
 | **Environment** | python-dotenv |
 | **Progress Tracking** | tqdm |
 
@@ -148,9 +167,14 @@ RESEARCH_CORPUS_AGENT/
 │   ├── tasks.py            # Task definitions for each agent
 │   ├── crew.py             # Crew assembly and execution
 │   ├── evaluate.py         # Evaluation scripts (Recall@K, Precision@K)
-│   └── test_queries.py     # 25 test queries for evaluation
+│   ├── test_queries.py     # 25 test queries for evaluation
+│   └── static/             # Frontend assets served by FastAPI
+│       ├── index.html      # Main SPA Dashboard HTML
+│       ├── index.css       # Premium Dark-themed styling
+│       └── app.js          # Tab routing, search execution, chart rendering
 ├── data/
-│   └── arxiv_paper.csv     # ArXiv dataset (not tracked by git)
+│   ├── arxiv_paper.csv     # ArXiv dataset (not tracked by git)
+│   └── history.json        # Local storage for search history
 ├── evaluation/
 │   └── results.json        # Evaluation results
 ├── chroma_db/              # ChromaDB vector store (not tracked by git)
@@ -158,7 +182,10 @@ RESEARCH_CORPUS_AGENT/
 │   └── crew_runs.json      # Agent run logs for observability
 ├── .env.example            # Environment variables template
 ├── .gitignore              # Git ignore rules
+├── .dockerignore           # Excluded files for Docker builds
+├── Dockerfile              # Docker compilation and runner blueprint
 ├── requirements.txt        # Python dependencies
+├── app.py                  # FastAPI application entrypoint (root directory)
 ├── README.md               # Project documentation
 └── ARCHITECTURE.md         # Detailed architecture documentation
 ```
@@ -238,27 +265,72 @@ All documents added successfully!
 
 ## 🚀 Usage
 
-### Run the Research Agent
+### Option 1: Run the Interactive Web UI (Recommended)
+
+Start the FastAPI application:
+
+```bash
+python app.py
+```
+
+The server will start on port `8080`. Open your browser and navigate to:
+```
+http://127.0.0.1:8080/
+```
+
+- Use the **Search** tab to run research queries.
+- Use the **Ingestion Hub** tab to add new papers to the database.
+- Use the **Evaluation** tab to see quantitative performance graphs.
+
+### Option 2: Run via CLI
+
+You can run the multi-agent pipeline directly from the command line:
 
 ```bash
 python src/crew.py
 ```
 
-### Ask Custom Queries
+### Run Evaluation Scripts
 
-Open `src/crew.py` and change the query on line 16:
-
-```python
-query = "Compare how BERT and GPT approach language understanding"
-result = run_research_agent(query)
-print(result)
-```
-
-### Run Evaluation
+To rerun the retrieval and response evaluation logic:
 
 ```bash
 python src/evaluate.py
 ```
+
+---
+
+## 🐳 Docker & Cloud Deployment
+
+You can containerize the application for local testing or cloud hosting.
+
+### Build and Run Locally with Docker
+
+1. **Build the Docker Image**:
+   ```bash
+   docker build -t research-corpus-agent .
+   ```
+
+2. **Run the Docker Container**:
+   Pass your Google Gemini API Key as an environment variable:
+   ```bash
+   docker run -d -p 8080:8080 -e GOOGLE_API_KEY="your_api_key_here" research-corpus-agent
+   ```
+   Once launched, navigate to `http://localhost:8080` in your web browser.
+
+### Cloud Deployment Guide
+
+#### 1. Hugging Face Spaces (Docker SDK) — Recommended Free Tier
+Hugging Face Spaces offers a free tier with 16GB RAM, which is ideal for hosting local embedding models:
+- Create a new Space on [Hugging Face Spaces](https://huggingface.co/new-space).
+- Select **Docker** as the SDK (with the Blank template).
+- Under the Space's **Settings** tab, add `GOOGLE_API_KEY` as a secret environment variable.
+- Clone the Space's repository, paste the project files (including `Dockerfile` and `.dockerignore`), commit, and push.
+
+#### 2. Railway.app or Render.com
+- Link your GitHub repository.
+- Configure environment variables: `GOOGLE_API_KEY` and set `PORT` (usually mapped automatically).
+- **Tip**: To persist ingested papers from the Paper Ingestion Hub, attach a **Persistent Volume/Disk** (minimum 500MB) and mount it to `/app/chroma_db` (or `/app/data` to persist search history too).
 
 ---
 
@@ -343,6 +415,3 @@ GitHub: [@Vaibhavjain22](https://github.com/Vaibhavjain22)
 
 ---
 
-## 📄 License
-
-This project is created for the Uptiq.ai Internship Assignment.

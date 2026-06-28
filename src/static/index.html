@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Research Corpus Agent — AI Research Assistant</title>
+    <meta name="description" content="An intelligent multi-agent AI system that answers complex queries over 136,000+ ArXiv research papers using CrewAI, ChromaDB, and Google Gemini." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="/static/index.css" />
+</head>
+<body>
+
+    <!-- ─── Sidebar ───────────────────────────────────────── -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-atom"></i></div>
+                <div>
+                    <h1 class="logo-title">Research Agent</h1>
+                    <p class="logo-sub">Multi-Agent AI System</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" data-tab="search" id="nav-search">
+                <i class="fas fa-search"></i> Research Search
+            </button>
+            <button class="nav-btn" data-tab="ingest" id="nav-ingest">
+                <i class="fas fa-file-import"></i> Ingestion Hub
+            </button>
+            <button class="nav-btn" data-tab="evaluation" id="nav-evaluation">
+                <i class="fas fa-chart-bar"></i> Evaluation
+            </button>
+        </nav>
+
+        <div class="sidebar-history">
+            <div class="history-header">
+                <h3><i class="fas fa-clock-rotate-left"></i> Recent Queries</h3>
+            </div>
+            <div id="history-list" class="history-list">
+                <p class="history-empty">No queries yet. Start searching!</p>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="tech-badges">
+                <span class="badge">CrewAI</span>
+                <span class="badge">Gemini</span>
+                <span class="badge">ChromaDB</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ─── Mobile Header ─────────────────────────────────── -->
+    <header class="mobile-header">
+        <button id="mobile-menu-btn" class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <span class="mobile-title"><i class="fas fa-atom"></i> Research Agent</span>
+    </header>
+
+    <!-- ─── Main Content ──────────────────────────────────── -->
+    <main class="main-content">
+
+        <!-- ── Search Tab ─────────────────────────────────── -->
+        <section id="tab-search" class="tab-panel active">
+            <div class="panel-header">
+                <h2>Research Search</h2>
+                <p>Ask complex research questions across 136,000+ ArXiv papers</p>
+            </div>
+
+            <!-- Search Input -->
+            <div class="search-container">
+                <div class="search-box" id="search-box">
+                    <i class="fas fa-microscope search-icon"></i>
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Ask a research question…"
+                        autocomplete="off"
+                    />
+                    <button id="search-btn" class="search-submit">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+
+                <!-- Suggestion Chips -->
+                <div class="suggestion-chips" id="suggestion-chips">
+                    <span class="chip" data-query="What is dynamic backtracking in search algorithms?">
+                        <i class="fas fa-lightbulb"></i> Dynamic Backtracking
+                    </span>
+                    <span class="chip" data-query="Compare BERT and GPT language models">
+                        <i class="fas fa-lightbulb"></i> BERT vs GPT
+                    </span>
+                    <span class="chip" data-query="How does reinforcement learning apply to game tree search?">
+                        <i class="fas fa-lightbulb"></i> RL + Game Trees
+                    </span>
+                    <span class="chip" data-query="What are the main challenges reported in NLP research?">
+                        <i class="fas fa-lightbulb"></i> NLP Challenges
+                    </span>
+                    <span class="chip" data-query="Compare decision tree induction methods and their complexity tradeoffs">
+                        <i class="fas fa-lightbulb"></i> Decision Trees
+                    </span>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="loading-state hidden">
+                <div class="loading-card">
+                    <div class="agent-pipeline">
+                        <div class="agent-step active" id="step-planner">
+                            <div class="step-icon"><i class="fas fa-brain"></i></div>
+                            <span>Planner</span>
+                        </div>
+                        <div class="pipeline-connector"></div>
+                        <div class="agent-step" id="step-retriever">
+                            <div class="step-icon"><i class="fas fa-search"></i></div>
+                            <span>Retriever</span>
+                        </div>
+                        <div class="pipeline-connector"></div>
+                        <div class="agent-step" id="step-analyst">
+                            <div class="step-icon"><i class="fas fa-chart-line"></i></div>
+                            <span>Analyst</span>
+                        </div>
+                        <div class="pipeline-connector"></div>
+                        <div class="agent-step" id="step-critic">
+                            <div class="step-icon"><i class="fas fa-check-double"></i></div>
+                            <span>Critic</span>
+                        </div>
+                    </div>
+                    <div class="loading-text">
+                        <div class="loading-spinner"></div>
+                        <p id="loading-message">Agents are analyzing your query…</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Display -->
+            <div id="result-container" class="result-container hidden">
+                <div class="result-header">
+                    <div class="result-meta">
+                        <span id="result-query-label" class="result-query-label"></span>
+                        <span id="result-time" class="result-time"></span>
+                    </div>
+                </div>
+                <div id="result-content" class="result-content markdown-body"></div>
+            </div>
+
+            <!-- Welcome State -->
+            <div id="welcome-state" class="welcome-state">
+                <div class="welcome-icon"><i class="fas fa-robot"></i></div>
+                <h3>Welcome to Research Corpus Agent</h3>
+                <p>A multi-agent AI system that answers complex research questions by coordinating 4 specialized agents — Planner, Retriever, Analyst, and Critic — across 136,000+ ArXiv papers.</p>
+                <div class="architecture-mini">
+                    <div class="arch-step"><i class="fas fa-brain"></i><span>Plan</span></div>
+                    <i class="fas fa-arrow-right arch-arrow"></i>
+                    <div class="arch-step"><i class="fas fa-search"></i><span>Retrieve</span></div>
+                    <i class="fas fa-arrow-right arch-arrow"></i>
+                    <div class="arch-step"><i class="fas fa-chart-line"></i><span>Analyze</span></div>
+                    <i class="fas fa-arrow-right arch-arrow"></i>
+                    <div class="arch-step"><i class="fas fa-check-double"></i><span>Validate</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Ingestion Hub Tab ──────────────────────────── -->
+        <section id="tab-ingest" class="tab-panel">
+            <div class="panel-header">
+                <h2>Paper Ingestion Hub</h2>
+                <p>Add new research papers to the vector knowledge base</p>
+            </div>
+
+            <div class="ingest-form-card">
+                <form id="ingest-form" autocomplete="off">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ingest-title"><i class="fas fa-heading"></i> Paper Title <span class="required">*</span></label>
+                            <input type="text" id="ingest-title" placeholder="e.g. Attention Is All You Need" required />
+                        </div>
+                    </div>
+                    <div class="form-row two-col">
+                        <div class="form-group">
+                            <label for="ingest-authors"><i class="fas fa-users"></i> Authors</label>
+                            <input type="text" id="ingest-authors" placeholder="e.g. Vaswani, Shazeer, Parmar et al." />
+                        </div>
+                        <div class="form-group">
+                            <label for="ingest-category"><i class="fas fa-tag"></i> Category</label>
+                            <select id="ingest-category">
+                                <option value="cs.LG">Machine Learning</option>
+                                <option value="cs.CV">Computer Vision</option>
+                                <option value="cs.CL">Computation and Language (NLP)</option>
+                                <option value="cs.AI">Artificial Intelligence</option>
+                                <option value="stat.ML">Machine Learning (Statistics)</option>
+                                <option value="cs.NE">Neural and Evolutionary Computing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ingest-date"><i class="fas fa-calendar"></i> Published Date</label>
+                            <input type="date" id="ingest-date" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ingest-abstract"><i class="fas fa-file-alt"></i> Abstract / Summary <span class="required">*</span></label>
+                            <textarea id="ingest-abstract" rows="8" placeholder="Paste the paper's abstract here…" required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="ingest-submit-btn" id="ingest-submit-btn">
+                        <i class="fas fa-upload"></i> Ingest Paper
+                    </button>
+                </form>
+
+                <!-- Ingest Status -->
+                <div id="ingest-status" class="ingest-status hidden"></div>
+            </div>
+        </section>
+
+        <!-- ── Evaluation Tab ─────────────────────────────── -->
+        <section id="tab-evaluation" class="tab-panel">
+            <div class="panel-header">
+                <h2>Evaluation Dashboard</h2>
+                <p>Performance metrics across 25 test queries</p>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="eval-summary" id="eval-summary">
+                <div class="eval-card">
+                    <div class="eval-card-icon"><i class="fas fa-crosshairs"></i></div>
+                    <div class="eval-card-value" id="eval-precision">—</div>
+                    <div class="eval-card-label">Precision@5</div>
+                </div>
+                <div class="eval-card">
+                    <div class="eval-card-icon"><i class="fas fa-bullseye"></i></div>
+                    <div class="eval-card-value" id="eval-recall">—</div>
+                    <div class="eval-card-label">Recall@5</div>
+                </div>
+                <div class="eval-card">
+                    <div class="eval-card-icon"><i class="fas fa-spell-check"></i></div>
+                    <div class="eval-card-value" id="eval-keyword">—</div>
+                    <div class="eval-card-label">Keyword Coverage</div>
+                </div>
+                <div class="eval-card">
+                    <div class="eval-card-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="eval-card-value" id="eval-success">—</div>
+                    <div class="eval-card-label">Success Rate</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="eval-charts">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-bar"></i> Precision & Recall by Query</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-precision-recall"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> Performance by Query Type</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="chart-query-types"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Failure Cases -->
+            <div class="eval-failures" id="eval-failures">
+                <h3><i class="fas fa-exclamation-triangle"></i> Failure Case Analysis</h3>
+                <div id="failure-list" class="failure-list"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ─── Overlay for mobile sidebar ────────────────────── -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- App Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

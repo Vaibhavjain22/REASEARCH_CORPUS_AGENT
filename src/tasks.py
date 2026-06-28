@@ -43,11 +43,12 @@ task3 = Task(
 task4 = Task(
     description="""
         Review the analyst answer carefully.
-        Check for accuracy and completeness.
+        Check for accuracy and completeness against the retrieved papers.
         Add citations to source papers.
         Return the final validated answer.
+
+        CRITICAL: Do NOT include any planning steps, review logs, self-corrections, or intermediate thought processes in your final output. Your output must contain ONLY the clean, ready-to-read, final validated answer with citations.
     """,
-    expected_output="Final validated answer with "
-                    "paper citations and sources.",
+    expected_output="A clean, formatted final validated answer containing ONLY the research summary with inline citations. No meta-commentary, planning, or thought logs allowed.",
     agent=critic
 )

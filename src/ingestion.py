@@ -48,6 +48,7 @@ vector_store = Chroma(
     persist_directory="./chroma_db",  # Where to save data locally
 )
 
+# storing  the chunks in the vector store
 from tqdm import tqdm
 
 BATCH_SIZE = 500

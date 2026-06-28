@@ -7,13 +7,13 @@ def run_research_agent(query: str) -> str:
         agents=[planner, retriever_agent, analyst, critic],
         tasks=[task1, task2, task3, task4],
         process=Process.sequential,
-        verbose=True
+        verbose=False
     )
     result = crew.kickoff(inputs={"query": query})
     return result
 
 if __name__ == "__main__":
-    query = "What are the challenges in learning logic programs with cut?"
+    query = '''What is the difference between ML and DL'''
     
     print("\n" + "="*60)
     print(f"Query: {query}")

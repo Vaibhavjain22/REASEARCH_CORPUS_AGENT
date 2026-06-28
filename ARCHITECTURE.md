@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [High Level Overview](#high-level-overview)
+- [Layer 0 — Web UI & API Layer](#layer-0--web-ui--api-layer)
 - [Layer 1 — Data Platform](#layer-1--data-platform)
 - [Layer 2 — Retrieval System](#layer-2--retrieval-system)
 - [Layer 3 — Agentic Layer](#layer-3--agentic-layer)
@@ -17,35 +18,58 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
+│                    USER INTERFACE & API LAYER                   │
 │                                                                 │
-│   USER QUERY                                                    │
-│       │                                                         │
-│       ▼                                                         │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              AGENTIC LAYER (CrewAI)                     │   │
-│  │                                                         │   │
-│  │   Planner → Retriever → Analyst → Critic                │   │
-│  └────────────────────┬────────────────────────────────────┘   │
-│                       │ search queries                         │
-│                       ▼                                         │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              RETRIEVAL LAYER                            │   │
-│  │                                                         │   │
-│  │   Query Embedding → Vector Similarity Search → Top-K   │   │
-│  └────────────────────┬────────────────────────────────────┘   │
-│                       │ fetch vectors                          │
-│                       ▼                                         │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              DATA PLATFORM LAYER                        │   │
-│  │                                                         │   │
-│  │   ChromaDB Vector Store (20,000 chunks)                 │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                       │                                         │
-│                       ▼                                         │
-│   FINAL ANSWER + CITATIONS + LOGS                               │
+│   Web Browser UI (Single Page App: Search, Ingest, Eval)        │
+│        │                                                         │
+│        ▼ REST API Requests                                      │
+│   FastAPI Web Server (app.py)                                   │
+└───────────────────────┬─────────────────────────────────────────┘
+                        │ triggers execution
+                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     AGENTIC LAYER (CrewAI)                      │
 │                                                                 │
+│   🧠 Planner → 🔍 Retriever → 📊 Analyst → ✅ Critic            │
+└───────────────────────┬─────────────────────────────────────────┘
+                        │ similarity search queries
+                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     RETRIEVAL LAYER                             │
+│                                                                 │
+│   Query Embedding → Vector Similarity Search → Top-K Results    │
+└───────────────────────┬─────────────────────────────────────────┘
+                        │ fetch vectors
+                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     DATA PLATFORM LAYER                         │
+│                                                                 │
+│   ChromaDB Vector Store (sqlite + all-MiniLM-L6-v2 embeddings)  │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Layer 0 — Web UI & API Layer
+
+### Overview
+This layer exposes a REST API via **FastAPI** to interact with the multi-agent system and serves a premium dark-themed Single Page Application (SPA) dashboard for end-user interaction.
+
+### REST API Endpoints
+
+| Endpoint | Method | Payload | Description |
+|---|---|---|---|
+| `/` | `GET` | None | Serves the frontend `index.html` application. |
+| `/api/search` | `POST` | `{"query": "string"}` | Executes the CrewAI search agent pipeline and returns the final answer with time elapsed. |
+| `/api/ingest` | `POST` | `{"title": "...", "authors": "...", "category": "...", "published_date": "...", "abstract": "..."}` | Dynamically chunks, embeds, and indexes a custom paper into the ChromaDB collection. |
+| `/api/history` | `GET` | None | Returns the list of previously completed searches and metadata from local JSON storage. |
+| `/api/evaluation` | `GET` | None | Reads the quantitative evaluation results from `evaluation/results.json` to feed frontend visualizations. |
+
+### Frontend UI Components (SPA)
+- **Search Module**: Modern glassmorphic search input featuring instant suggestion chips. Integrates a step-by-step progress tracker that pulses as the multi-agent execution pipeline processes the request.
+- **Paper Ingestion Form**: Interactive panel that validates and posts paper metadata to the `/api/ingest` endpoint, updating the vector database on-the-fly.
+- **Evaluation Dashboard**: Visualizes system precision, recall, keyword coverage, and query breakdown using **Chart.js** canvases dynamically populated via API fetch.
+- **Persistent History Sidebar**: Pulls cached query execution summaries, storing and displaying previous runs with execution time badges. Selecting a history item renders it immediately.
 
 ---
 
@@ -338,12 +362,15 @@ OUTPUT: Detailed comparison of BERT vs GPT
 
 | Technology | Why Chosen |
 |---|---|
-| **CrewAI** | Native multi-agent support, built-in verbose logging, sequential process control |
-| **ChromaDB** | Easy local setup, LangChain integration, persistent storage, free |
-| **all-MiniLM-L6-v2** | Free, runs on CPU, good semantic quality for scientific text |
-| **Gemini 2.0 Flash** | Free tier, fast responses, respects tool boundaries |
-| **LangChain** | CSVLoader and TextSplitter simplify ingestion pipeline |
-| **Python** | Rich ML ecosystem, all required libraries available |
+| **FastAPI** | Extremely fast web framework, native async support, autogenerated OpenAPI documentation, simple static file mounting. |
+| **Uvicorn** | High-performance ASGI server for running Python web apps. |
+| **Chart.js** | Lightweight, canvas-based chart visualization library for responsive dashboards. |
+| **CrewAI** | Native multi-agent support, built-in verbose logging, sequential process control. |
+| **ChromaDB** | Easy local setup, LangChain integration, persistent storage, free. |
+| **all-MiniLM-L6-v2** | Free, runs on CPU, good semantic quality for scientific text. |
+| **Gemini 2.0 Flash** | Free tier, fast responses, respects tool boundaries. |
+| **LangChain** | CSVLoader and TextSplitter simplify ingestion pipeline. |
+| **Python** | Rich ML ecosystem, all required libraries available. |
 
 ---
 
@@ -363,6 +390,15 @@ Planner, Analyst, and Critic agents have `tools=[]` explicitly set. This prevent
 
 ### 5. Chunk Size of 1500
 A chunk size of 1500 characters was chosen to capture complete abstract context while keeping embeddings focused enough for precise retrieval.
+
+### 6. App Entrypoint at Project Root
+The FastAPI backend `app.py` resides in the root workspace directory. This allows the web server to run directly, automatically adding `src/` to `sys.path` to keep crew imports clean while correctly targeting configuration and data files in sibling directories.
+
+### 7. Custom Port Configuration
+Since port `8000` is frequently occupied by other local services or active developers, the application is configured to run on port `8080` (with custom port command validation in uvicorn).
+
+### 8. Client-Side SPA Architecture
+To provide a smooth, modern UI without page transitions, the web client is designed as a Single Page Application (SPA). It uses vanilla CSS for premium styling (custom dark design tokens, glassmorphism card components, and subtle linear gradient backgrounds) and vanilla JavaScript for dynamic DOM updates, localStorage indexing, and REST integrations.
 
 ---
 

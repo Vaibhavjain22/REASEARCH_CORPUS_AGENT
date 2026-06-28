@@ -36,3 +36,7 @@ ragas
  
 # Utilities
 litellm
+ 
+# Web Server
+fastapi
+uvicorn
