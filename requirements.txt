@@ -16,7 +16,7 @@ langchain-huggingface
 # Vector Databases
 chromadb
  
-# Embeddings
+# Embeddings via huggingface
 sentence-transformers
  
 # CrewAI
