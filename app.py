@@ -13,6 +13,10 @@ from datetime import datetime
 from pathlib import Path
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -149,7 +153,7 @@ async def api_ingest(request: Request):
     try:
         from langchain_core.documents import Document
         from langchain_text_splitters import RecursiveCharacterTextSplitter
-        from langchain_huggingface import HuggingFaceEmbeddings
+        from langchain_openai import OpenAIEmbeddings
         from langchain_chroma import Chroma
 
         # Build document text in the same format as the CSV ingestion
@@ -170,10 +174,9 @@ async def api_ingest(request: Request):
         chunks = splitter.split_documents([doc])
 
         # Embed and store
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs={"device": "cpu"},
-            encode_kwargs={"normalize_embeddings": True, "batch_size": 256},
+        embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-small",
+            api_key=os.getenv("OPENAI_API_KEY")
         )
 
         vector_store = Chroma(

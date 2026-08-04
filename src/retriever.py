@@ -1,4 +1,4 @@
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 
 persistence_directory = "./chroma_db"
@@ -10,8 +10,8 @@ def get_db():
     """Load ChromaDB only when first needed"""
     global _db
     if _db is None:
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-small"
         )
         _db = Chroma(
             persist_directory=persistence_directory,

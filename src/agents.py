@@ -8,8 +8,8 @@ load_dotenv()
 
 
 llm = LLM(
-    model="gemini/gemini-2.5-flash", 
-    api_key=os.getenv("GOOGLE_API_KEY")
+    model="gpt-4o-mini", 
+    api_key=os.getenv("OPENAI_API_KEY")
 )
 
 
@@ -21,7 +21,7 @@ planner = Agent(
               "research questions into searchable components.",
     llm=llm,
     tools=[],
-    verbose=False
+    verbose=True
 )
 
 retriever_agent = Agent(
@@ -32,7 +32,7 @@ retriever_agent = Agent(
               "academic papers from large databases.",
     tools=[vector_search_tool],
     llm=llm,
-    verbose=False
+    verbose=True
 )
 
 analyst = Agent(
@@ -44,7 +44,7 @@ analyst = Agent(
               "comparisons and trends.",
     llm=llm,
     tools=[],
-    verbose=False
+    verbose=True
 )
 
 critic = Agent(
@@ -56,7 +56,7 @@ critic = Agent(
               "claims are grounded in retrieved papers.",
     llm=llm,
     tools=[],
-    verbose=False
+    verbose=True
 )
 
 

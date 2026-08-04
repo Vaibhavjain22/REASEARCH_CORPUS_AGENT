@@ -1,6 +1,6 @@
 # 🔬 Research Corpus Agent(RAG-BASED)
 
-An intelligent multi-agent AI system that answers complex queries over a large corpus of ArXiv research papers using **CrewAI**, **ChromaDB**, and **Google Gemini**.
+An intelligent multi-agent AI system that answers complex queries over a large corpus of ArXiv research papers using **CrewAI**, **ChromaDB**, and **OpenAI GPT**.
 
 ---
 
@@ -76,7 +76,7 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 1. **Loading** — CSV loaded using LangChain `CSVLoader`
 2. **Cleaning** — Removed newlines and special characters from abstracts
 3. **Chunking** — Split into chunks of 1500 characters with 50 character overlap using `RecursiveCharacterTextSplitter`
-4. **Embedding** — Generated embeddings using `sentence-transformers/all-MiniLM-L6-v2`
+4. **Embedding** — Generated embeddings using OpenAI's `text-embedding-3-small` API
 5. **Storage** — Stored 20,000 chunks in ChromaDB with batch size of 500
 
 ---
@@ -88,11 +88,11 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 │                     DATA PLATFORM LAYER                     │
 │                                                             │
 │   ArXiv CSV (170MB)                                         │
-│        ↓                                                    │
+│        │                                                    │
 │   CSVLoader → Text Cleaning → RecursiveCharacterSplitter    │
-│        ↓                                                    │
-│   HuggingFace Embeddings (all-MiniLM-L6-v2)                 │
-│        ↓                                                    │
+│        │                                                    │
+│   OpenAI Embeddings (text-embedding-3-small)                │
+│        │                                                    │
 │   ChromaDB Vector Store (20,000 chunks)                     │
 └─────────────────────────────────────────────────────────────┘
                           ↕ similarity search
@@ -141,9 +141,9 @@ The project features a premium glassmorphic dark-theme Single Page Application (
 |---|---|
 | **Language** | Python 3.12 |
 | **Agent Framework** | CrewAI |
-| **LLM** | Google Gemini 2.0 Flash |
+| **LLM** | OpenAI gpt-4o-mini |
 | **Vector Database** | ChromaDB |
-| **Embeddings** | sentence-transformers/all-MiniLM-L6-v2 |
+| **Embeddings** | OpenAI text-embedding-3-small |
 | **Data Loading** | LangChain CSVLoader |
 | **Text Splitting** | LangChain RecursiveCharacterTextSplitter |
 | **Web Server Framework** | FastAPI (backend) |
@@ -198,7 +198,7 @@ RESEARCH_CORPUS_AGENT/
 
 - Python 3.12+
 - Git
-- Google Gemini API Key (free at [aistudio.google.com](https://aistudio.google.com))
+- OpenAI API Key
 
 ### Step 1 — Clone the Repository
 
@@ -232,7 +232,7 @@ pip install -r requirements.txt
 copy .env.example .env
 
 # Open .env and add your API key
-GOOGLE_API_KEY=your_gemini_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 ### Step 5 — Download Dataset
@@ -312,9 +312,9 @@ You can containerize the application for local testing or cloud hosting.
    ```
 
 2. **Run the Docker Container**:
-   Pass your Google Gemini API Key as an environment variable:
+   Pass your OpenAI API Key as an environment variable:
    ```bash
-   docker run -d -p 8080:8080 -e GOOGLE_API_KEY="your_api_key_here" research-corpus-agent
+   docker run -d -p 8080:8080 -e OPENAI_API_KEY="your_api_key_here" research-corpus-agent
    ```
    Once launched, navigate to `http://localhost:8080` in your web browser.
 
@@ -324,12 +324,12 @@ You can containerize the application for local testing or cloud hosting.
 Hugging Face Spaces offers a free tier with 16GB RAM, which is ideal for hosting local embedding models:
 - Create a new Space on [Hugging Face Spaces](https://huggingface.co/new-space).
 - Select **Docker** as the SDK (with the Blank template).
-- Under the Space's **Settings** tab, add `GOOGLE_API_KEY` as a secret environment variable.
+- Under the Space's **Settings** tab, add `OPENAI_API_KEY` as a secret environment variable.
 - Clone the Space's repository, paste the project files (including `Dockerfile` and `.dockerignore`), commit, and push.
 
 #### 2. Railway.app or Render.com
 - Link your GitHub repository.
-- Configure environment variables: `GOOGLE_API_KEY` and set `PORT` (usually mapped automatically).
+- Configure environment variables: `OPENAI_API_KEY` and set `PORT` (usually mapped automatically).
 - **Tip**: To persist ingested papers from the Paper Ingestion Hub, attach a **Persistent Volume/Disk** (minimum 500MB) and mount it to `/app/chroma_db` (or `/app/data` to persist search history too).
 
 ---
@@ -391,7 +391,7 @@ Output: "Reinforcement learning combined with game tree search,
 ## ⚠️ Known Limitations
 
 1. **Out-of-domain queries** — System returns unrelated papers for non-research queries like food or sports
-2. **API Rate Limits** — Gemini free tier has quota limits which may cause delays
+2. **API Rate Limits** — OpenAI free/tier 1 rate limits (RPM/TPM) may cause delays
 3. **Dataset Coverage** — Only covers AI/ML papers — queries about other domains may return poor results
 4. **Chunk Size** — Fixed chunk size of 1500 may cut off important context in some papers
 5. **No Hybrid Search** — Currently uses only vector search; BM25 hybrid search not implemented

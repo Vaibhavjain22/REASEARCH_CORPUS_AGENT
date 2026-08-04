@@ -12,6 +12,7 @@ langchain-core
 langchain-text-splitters
 langchain-chroma
 langchain-huggingface
+langchain-openai
 
 # Vector Databases
 chromadb

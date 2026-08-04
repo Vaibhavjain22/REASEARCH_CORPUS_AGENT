@@ -44,7 +44,7 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                     DATA PLATFORM LAYER                         │
 │                                                                 │
-│   ChromaDB Vector Store (sqlite + all-MiniLM-L6-v2 embeddings)  │
+│   ChromaDB Vector Store (sqlite + text-embedding-3-small)      │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -104,10 +104,9 @@ arxiv_paper.csv (170MB, 136,238 papers)
              │
              ▼
 ┌─────────────────────────┐
-│   HuggingFace           │  Model: all-MiniLM-L6-v2
-│   Embeddings            │  Device: CPU
-│                         │  Batch size: 256
-│                         │  Normalized embeddings: True
+│   OpenAI                │  Model: text-embedding-3-small
+│   Embeddings            │  Dimensions: 1536
+│                         │  API-based embedding generation
 └────────────┬────────────┘
              │
              ▼
@@ -128,7 +127,7 @@ arxiv_paper.csv (170MB, 136,238 papers)
 |---|---|---|
 | Chunk size | 1500 chars | Captures full abstract context |
 | Chunk overlap | 50 chars | Prevents losing context at boundaries |
-| Embedding model | all-MiniLM-L6-v2 | Fast, free, good semantic quality |
+| Embedding model | text-embedding-3-small | High-accuracy 1536-dim OpenAI embeddings |
 | Batch size | 500 | Within ChromaDB's 5461 limit |
 | Total chunks | 20,000 | Sufficient for diverse retrieval |
 
@@ -147,7 +146,7 @@ User Query (text)
          ▼
 ┌─────────────────────────┐
 │   Query Embedding       │  Same model as ingestion
-│   (all-MiniLM-L6-v2)   │  Ensures compatible vector space
+│   (text-embedding-3-small) │ Ensures compatible vector space
 └────────────┬────────────┘
              │
              ▼
@@ -256,10 +255,9 @@ Final Answer + Citations
 ### LLM Configuration
 
 ```
-Provider : Google Gemini
-Model    : gemini/gemini-2.5-flash
-Tier     : Free tier
-Rate     : 10 requests/minute
+Provider : OpenAI
+Model    : gpt-4o-mini
+Tier     : API key tier (Pay-as-you-go)
 ```
 
 ---
@@ -367,8 +365,8 @@ OUTPUT: Detailed comparison of BERT vs GPT
 | **Chart.js** | Lightweight, canvas-based chart visualization library for responsive dashboards. |
 | **CrewAI** | Native multi-agent support, built-in verbose logging, sequential process control. |
 | **ChromaDB** | Easy local setup, LangChain integration, persistent storage, free. |
-| **all-MiniLM-L6-v2** | Free, runs on CPU, good semantic quality for scientific text. |
-| **Gemini 2.0 Flash** | Free tier, fast responses, respects tool boundaries. |
+| **text-embedding-3-small** | Cost-effective, high-accuracy 1536-dimensional API-based embeddings. |
+| **gpt-4o-mini** | Low-cost, fast API responses, superior tool calling and logical reasoning. |
 | **LangChain** | CSVLoader and TextSplitter simplify ingestion pipeline. |
 | **Python** | Rich ML ecosystem, all required libraries available. |
 

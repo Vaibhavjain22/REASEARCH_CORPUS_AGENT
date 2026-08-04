@@ -1,5 +1,10 @@
+import os
+from dotenv import load_dotenv
 from langchain_community.document_loaders import CSVLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+
+load_dotenv()
 
 
 # data loading 
@@ -25,15 +30,10 @@ print(f"Total chunks created: {len(texts)}")
 
 # embedding the data
 print("Loading embedding model...")
-from langchain_huggingface import HuggingFaceEmbeddings
-embeddings=HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2",
-    model_kwargs={"device": "cpu"},
-    encode_kwargs={
-        "normalize_embeddings": True,
-        "batch_size": 256,        # process 256 chunks at once instead of 1
-        
-    }
+
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-small",
+    api_key=os.getenv("OPENAI_API_KEY")
 )
 
 
