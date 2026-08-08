@@ -1,3 +1,4 @@
+import asyncio
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 
@@ -24,6 +25,12 @@ def vector_search(query: str, top_k: int = 3) -> list:
     """Search ChromaDB using vector similarity"""
     db = get_db()
     results = db.similarity_search(query, k=top_k)
+    return results
+
+async def vector_search_async(query: str, top_k: int = 3) -> list:
+    """Search ChromaDB using vector similarity asynchronously"""
+    db = get_db()
+    results = await db.asimilarity_search(query, k=top_k)
     return results
 
 def format_results(docs: list) -> str:

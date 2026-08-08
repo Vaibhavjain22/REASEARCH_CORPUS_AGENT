@@ -34,6 +34,7 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 - ✅ **Interactive Dashboard** — Premium dark-themed UI built with FastAPI and Chart.js
 - ✅ **Paper Ingestion Hub** — Dynamically load and index new papers into ChromaDB
 - ✅ **Persistent History** — Sidebar showing past searches and response times
+- ⚡ **Async Parallel Retrieval** — Concurrently execute vector database searches for sub-queries to optimize system latency and merge/deduplicate results
 
 ---
 
@@ -99,7 +100,7 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 ┌─────────────────────────────────────────────────────────────┐
 │                     RETRIEVAL LAYER                         │
 │                                                             │
-│   Query → Embedding → Vector Similarity Search → Top-K Docs │
+│   Queries → Embedding → Async Parallel Vector Search        │
 └─────────────────────────────────────────────────────────────┘
                           ↕ retrieved docs
 ┌─────────────────────────────────────────────────────────────┐
@@ -107,7 +108,7 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 │                                                             │
 │   🧠 Planner    → Breaks query into search sub-questions    │
 │        ↓                                                    │
-│   🔍 Retriever  → Searches ChromaDB using vector_search     │
+│   🔍 Retriever  → Executes parallel searches via asyncio     │
 │        ↓                                                    │
 │   📊 Analyst    → Synthesizes answer from retrieved papers  │
 │        ↓                                                    │

@@ -140,27 +140,34 @@ The retrieval system converts user queries into vector embeddings and finds the 
 
 ### Retrieval Flow
 
+The system supports **Async Parallel Retrieval** when multiple comma-separated queries are passed:
+
 ```
-User Query (text)
-         │
-         ▼
-┌─────────────────────────┐
-│   Query Embedding       │  Same model as ingestion
-│   (text-embedding-3-small) │ Ensures compatible vector space
-└────────────┬────────────┘
-             │
-             ▼
-┌─────────────────────────┐
-│   ChromaDB              │  similarity_search()
-│   Similarity Search     │  Cosine similarity
-│                         │  Returns top-K documents
-└────────────┬────────────┘
-             │
-             ▼
-┌─────────────────────────┐
-│   format_results()      │  Formats docs as readable text
-│                         │  for LLM agents to consume
-└─────────────────────────┘
+        User Input Queries (comma-separated text)
+                         │
+                         ▼
+        ┌──────────────────────────────────┐
+        │       Query Tokenization         │
+        └────────────────┬─────────────────┘
+                         │
+           ┌─────────────┼─────────────┐ (Parallel async branches)
+           ▼             ▼             ▼
+      [Query 1]     [Query 2]     [Query 3]
+           │             │             │
+           ▼             ▼             ▼
+      Embed & Search Embed & Search Embed & Search (via db.asimilarity_search)
+           │             │             │
+           └─────────────┬─────────────┘
+                         │
+                         ▼
+        ┌──────────────────────────────────┐
+        │   Merge & Content Deduplication  │
+        └────────────────┬─────────────────┘
+                         │
+                         ▼
+        ┌──────────────────────────────────┐
+        │         format_results()         │ (Formatted for agents)
+        └──────────────────────────────────┘
 ```
 
 ### Key Files
@@ -397,6 +404,9 @@ Since port `8000` is frequently occupied by other local services or active devel
 
 ### 8. Client-Side SPA Architecture
 To provide a smooth, modern UI without page transitions, the web client is designed as a Single Page Application (SPA). It uses vanilla CSS for premium styling (custom dark design tokens, glassmorphism card components, and subtle linear gradient backgrounds) and vanilla JavaScript for dynamic DOM updates, localStorage indexing, and REST integrations.
+
+### 9. Async Parallel Retrieval & Deduplication
+To optimize pipeline latency for multi-hop queries, `vector_search_tool` supports parallel execution of multiple queries using `asyncio.gather` and LangChain's native `db.asimilarity_search`. Results are merged and deduplicated based on page content to keep the context window compact and relevant.
 
 ---
 
