@@ -1,9 +1,9 @@
-import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from crewai.tools import tool
-from retriever import vector_search_async, format_results
+from retriever import vector_search, format_results
 
 @tool("Vector Search Tool")
-async def vector_search_tool(query: str) -> str:
+def vector_search_tool(query: str) -> str:
     """
     Search the research paper database. You can pass a single query, 
     or multiple queries separated by commas to search them in parallel 
@@ -14,9 +14,9 @@ async def vector_search_tool(query: str) -> str:
     if not queries:
         return "No valid search queries provided."
     
-    # Execute all searches concurrently
-    tasks = [vector_search_async(q, top_k=5) for q in queries]
-    results_list = await asyncio.gather(*tasks)
+    # Execute all searches concurrently using a ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=len(queries)) as executor:
+        results_list = list(executor.map(lambda q: vector_search(q, top_k=5), queries))
     
     # Merge and deduplicate results based on page_content
     seen_contents = set()
