@@ -339,10 +339,10 @@ Hugging Face Spaces offers a free tier with 16GB RAM, which is ideal for hosting
 
 | Metric | Score |
 |---|---|
-| **Retrieval Precision@5** | 0.9125 (91.25%) |
-| **Retrieval Recall@5** | 0.9125 (91.25%) |
+| **Retrieval Precision@5** | 0.9375 (93.75%) |
+| **Retrieval Recall@5** | 0.9375 (93.75%) |
 | **Answer Keyword Coverage** | 0.9167 (91.67%) |
-| **Answer Avg Word Count** | 1525.3 words |
+| **Answer Avg Word Count** | 674.0 words |
 | **Answer Success Rate** | 3/3 (100%) |
 | **Failure Cases Handled** | 1/5 |
 
