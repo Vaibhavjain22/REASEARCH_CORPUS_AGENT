@@ -31,12 +31,12 @@ task2 = Task(
 task3 = Task(
     description="""
         Read all the retrieved papers carefully.
-        Synthesize a comprehensive answer to
-        the original query: {query}
+        Synthesize a comprehensive answer to the original query: {query}
         Include comparisons, key findings and trends.
+
+        CRITICAL RULE: Base your answer STRICTLY AND ONLY on the retrieved papers provided by the retriever. If the retriever returned 'No relevant papers found' or if no relevant context exists, DO NOT use your own general knowledge or make up an answer. Simply respond: "No relevant scientific research papers were found in the dataset for this query."
     """,
-    expected_output="A detailed well-structured answer "
-                    "with insights from multiple papers.",
+    expected_output="A detailed well-structured answer grounded STRICTLY in retrieved papers, OR an explicit refusal if no relevant papers were found.",
     agent=analyst
 )
 
@@ -44,11 +44,12 @@ task4 = Task(
     description="""
         Review the analyst answer carefully.
         Check for accuracy and completeness against the retrieved papers.
-        Add citations to source papers.
-        Return the final validated answer.
+        Add citations ONLY to real papers present in the retrieved context.
 
-        CRITICAL: Do NOT include any planning steps, review logs, self-corrections, or intermediate thought processes in your final output. Your output must contain ONLY the clean, ready-to-read, final validated answer with citations.
+        CRITICAL RULE: If the analyst output or retrieved papers state 'No relevant papers found', or if no relevant papers exist, DO NOT invent an answer, DO NOT use external knowledge, and DO NOT fabricate fake citations. Return ONLY: "No relevant scientific research papers were found in the dataset for this query."
+
+        Do NOT include any planning steps, review logs, self-corrections, or intermediate thought processes in your final output.
     """,
-    expected_output="A clean, formatted final validated answer containing ONLY the research summary with inline citations. No meta-commentary, planning, or thought logs allowed.",
+    expected_output="A clean, formatted final validated answer with inline citations, OR an explicit refusal if no relevant papers were found. No fake citations allowed.",
     agent=critic
 )

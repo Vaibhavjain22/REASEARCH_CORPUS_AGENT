@@ -21,17 +21,17 @@ def get_db():
         )
     return _db
 
-def vector_search(query: str, top_k: int = 3) -> list:
-    """Search ChromaDB using vector similarity"""
+def vector_search(query: str, top_k: int = 3, min_score: float = 0.15) -> list:
+    """Search ChromaDB using vector similarity with relevance score filtering"""
     db = get_db()
-    results = db.similarity_search(query, k=top_k)
-    return results
+    docs_and_scores = db.similarity_search_with_relevance_scores(query, k=top_k)
+    return [doc for doc, score in docs_and_scores if score >= min_score]
 
-async def vector_search_async(query: str, top_k: int = 3) -> list:
-    """Search ChromaDB using vector similarity asynchronously"""
+async def vector_search_async(query: str, top_k: int = 3, min_score: float = 0.15) -> list:
+    """Search ChromaDB using vector similarity asynchronously with relevance score filtering"""
     db = get_db()
-    results = await db.asimilarity_search(query, k=top_k)
-    return results
+    docs_and_scores = await db.asimilarity_search_with_relevance_scores(query, k=top_k)
+    return [doc for doc, score in docs_and_scores if score >= min_score]
 
 def format_results(docs: list) -> str:
     """Format retrieved docs into readable text for agents"""

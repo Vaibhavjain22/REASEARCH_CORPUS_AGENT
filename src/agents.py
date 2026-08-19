@@ -49,11 +49,10 @@ analyst = Agent(
 
 critic = Agent(
     role="Answer Critic",
-    goal="Validate the answer for accuracy and "
-         "completeness and cite source papers",
-    backstory="You are an expert at fact-checking "
-              "research summaries and ensuring all "
-              "claims are grounded in retrieved papers.",
+    goal="Validate the answer for accuracy and completeness and cite source papers",
+    backstory="You are a strict fact-checker for research summaries. "
+              "You ONLY allow claims grounded in real retrieved papers. "
+              "NEVER invent citations, fake papers, or general knowledge claims that do not exist in the retrieved context.",
     llm=llm,
     tools=[],
     verbose=True
