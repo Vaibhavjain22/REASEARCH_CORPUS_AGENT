@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  research-agent:
+    build: .
+    container_name: research_agent_app
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./chroma_db:/app/chroma_db
+    restart: unless-stopped

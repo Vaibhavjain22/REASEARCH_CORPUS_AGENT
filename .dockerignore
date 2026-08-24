@@ -5,6 +5,7 @@ env/
 
 # Ignore local environment keys and logs
 .env
+.env.local
 logs/*.json
 
 # Ignore python caching and bytecode
@@ -14,14 +15,14 @@ __pycache__/
 *.pyd
 .pytest_cache/
 
-# Ignore IDE settings
+# Ignore IDE settings and VCS
 .vscode/
 .idea/
 .git/
 .gitignore
 
-# Ignore local database states if we want a fresh start, 
-# or keep chroma_db if we want to bundle the default dataset.
-# Since we want to bundle the default database of papers, we DO NOT ignore chroma_db/ 
-# but we ignore temp upload files.
+# Ignore local media, evaluation outputs, and logs
+Demo_vedio/
+evaluation/
 *.log
+*.tmp
