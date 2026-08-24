@@ -11,14 +11,11 @@ langchain-community
 langchain-core
 langchain-text-splitters
 langchain-chroma
-langchain-huggingface
 langchain-openai
+rank-bm25
 
 # Vector Databases
 chromadb
- 
-# Embeddings via huggingface
-sentence-transformers
  
 # CrewAI
 crewai

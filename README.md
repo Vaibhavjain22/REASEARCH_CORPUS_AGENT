@@ -35,6 +35,7 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 - ✅ **Paper Ingestion Hub** — Dynamically load and index new papers into ChromaDB
 - ✅ **Persistent History** — Sidebar showing past searches and response times
 - ⚡ **Async Parallel Retrieval** — Concurrently execute vector database searches for sub-queries to optimize system latency and merge/deduplicate results
+- 🔀 **Hybrid Search (BM25 + Vector)** — Combines BM25 sparse keyword search and OpenAI dense vector search via Reciprocal Rank Fusion (RRF)
 
 ---
 
@@ -96,11 +97,11 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 │        │                                                    │
 │   ChromaDB Vector Store (20,000 chunks)                     │
 └─────────────────────────────────────────────────────────────┘
-                          ↕ similarity search
+                          ↕ similarity search & BM25 keyword matching
 ┌─────────────────────────────────────────────────────────────┐
 │                     RETRIEVAL LAYER                         │
 │                                                             │
-│   Queries → Embedding → Async Parallel Vector Search        │
+│   Queries → Hybrid Search (BM25 + Vector) → RRF Fusion      │
 └─────────────────────────────────────────────────────────────┘
                           ↕ retrieved docs
 ┌─────────────────────────────────────────────────────────────┐
