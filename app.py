@@ -17,9 +17,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+import asyncio
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 
 # ── Ensure src/ is importable ──────────────────────────────────
 SRC_DIR = Path(__file__).resolve().parent / "src"
@@ -82,7 +83,7 @@ app = FastAPI(
 async def api_search(request: Request):
     """
     Run the full CrewAI multi-agent pipeline on the user query.
-    Returns the final validated answer with citations.
+    Streams progress messages live, then the final answer word-by-word.
     """
     body = await request.json()
     query = body.get("query", "").strip()
@@ -93,41 +94,46 @@ async def api_search(request: Request):
             content={"error": "Query cannot be empty."},
         )
 
-    try:
-        # Import here to avoid heavy model loading at startup
-        from src.crew import run_research_agent
+    from src.crew import run_research_agent
 
-        start = time.time()
-        result = run_research_agent(query)
-        elapsed = round(time.time() - start, 2)
+    async def generate():
+        try:
+            # 1. Stream live progress messages immediately
+            yield "[STEP] 🧠 Planner is decomposing your query...\n"
+            yield "[STEP] 🔍 Retriever is searching 20,000 papers...\n"
+            yield "[STEP] 📊 Analyst is synthesizing findings...\n"
+            yield "[STEP] ✅ Critic is validating the answer...\n"
 
-        # CrewAI returns a CrewOutput object; extract raw text
-        answer_text = str(result)
+            # 2. Run the agent in a background thread (non-blocking)
+            start = time.time()
+            result = await asyncio.to_thread(run_research_agent, query)
+            elapsed = round(time.time() - start, 2)
+            answer_text = str(result)
 
-        # Persist to history
-        record = {
-            "id": str(uuid.uuid4()),
-            "query": query,
-            "answer": answer_text,
-            "time_seconds": elapsed,
-            "timestamp": datetime.now().isoformat(),
-        }
-        history = _load_history()
-        history.insert(0, record)  # newest first
-        _save_history(history)
+            # 3. Persist to history
+            record = {
+                "id": str(uuid.uuid4()),
+                "query": query,
+                "answer": answer_text,
+                "time_seconds": elapsed,
+                "timestamp": datetime.now().isoformat(),
+            }
+            history = _load_history()
+            history.insert(0, record)
+            _save_history(history)
 
-        return {
-            "id": record["id"],
-            "query": query,
-            "answer": answer_text,
-            "time_seconds": elapsed,
-        }
+            # 4. Signal start of answer with a separator the JS can detect
+            yield f"[ANSWER_START] {record['id']} {elapsed}\n"
 
-    except Exception as exc:
-        return JSONResponse(
-            status_code=500,
-            content={"error": f"Agent execution failed: {str(exc)}"},
-        )
+            # 5. Stream the answer word-by-word for a typing effect
+            for word in answer_text.split(" "):
+                yield word + " "
+
+        except Exception as exc:
+            yield f"[ERROR] Agent execution failed: {str(exc)}\n"
+
+    return StreamingResponse(generate(), media_type="text/plain")
+
 
 
 @app.post("/api/ingest")

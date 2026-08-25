@@ -97,7 +97,21 @@ async function executeSearch() {
     loadingState.classList.remove('hidden');
     searchBtn.disabled = true;
 
-    startAgentCycling();
+    // Reset all agent steps to initial state
+    agentSteps.forEach((id) => {
+        const el = document.getElementById(id);
+        el.classList.remove('active', 'done');
+    });
+    setActiveAgent(0); // Start with Planner active
+
+    // Clear result content
+    resultContent.innerHTML = '';
+    let accumulatedAnswer = '';
+    let elapsedTime = 0;
+
+    // Map [STEP] messages to agent step IDs
+    const stepOrder = ['step-planner', 'step-retriever', 'step-analyst', 'step-critic'];
+    let currentStepIdx = 0;
 
     try {
         const res = await fetch('/api/search', {
@@ -106,26 +120,86 @@ async function executeSearch() {
             body: JSON.stringify({ query }),
         });
 
-        const data = await res.json();
-
-        stopAgentCycling();
-        loadingState.classList.add('hidden');
-        searchBtn.disabled = false;
-
-        if (res.ok) {
-            showResult(data.query, data.answer, data.time_seconds);
-            loadHistory();   // refresh sidebar
-            searchInput.value = '';
-        } else {
-            showResult(query, `**Error:** ${data.error || 'Something went wrong.'}`, 0);
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({ error: 'Unknown error' }));
+            loadingState.classList.add('hidden');
+            searchBtn.disabled = false;
+            showResult(query, `**Error:** ${errData.error}`, 0);
+            return;
         }
+
+        // Read the stream chunk by chunk
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+
+            // Process complete lines from the buffer
+            const lines = buffer.split('\n');
+            buffer = lines.pop(); // keep incomplete last line
+
+            for (const line of lines) {
+                if (line.startsWith('[STEP]')) {
+                    // Mark previous step as done, activate next
+                    if (currentStepIdx > 0) {
+                        document.getElementById(stepOrder[currentStepIdx - 1]).classList.remove('active');
+                        document.getElementById(stepOrder[currentStepIdx - 1]).classList.add('done');
+                    }
+                    if (currentStepIdx < stepOrder.length) {
+                        document.getElementById(stepOrder[currentStepIdx]).classList.add('active');
+                        currentStepIdx++;
+                    }
+
+                } else if (line.startsWith('[ANSWER_START]')) {
+                    // All agents done — transition from loading to result view
+                    stepOrder.forEach(id => {
+                        document.getElementById(id).classList.remove('active');
+                        document.getElementById(id).classList.add('done');
+                    });
+                    const parts = line.split(' ');
+                    elapsedTime = parseFloat(parts[2]) || 0;
+
+                    loadingState.classList.add('hidden');
+                    resultQuery.textContent = query;
+                    resultTime.textContent = elapsedTime > 0 ? `⏱ ${elapsedTime}s` : '';
+                    resultContent.innerHTML = '';
+                    resultContainer.classList.remove('hidden');
+
+                } else if (line.startsWith('[ERROR]')) {
+                    loadingState.classList.add('hidden');
+                    searchBtn.disabled = false;
+                    showResult(query, `**Error:** ${line.replace('[ERROR]', '').trim()}`, 0);
+
+                } else if (line.trim()) {
+                    // Answer text — append progressively
+                    accumulatedAnswer += line + ' ';
+                    resultContent.innerHTML = renderMarkdown(accumulatedAnswer);
+                }
+            }
+        }
+
+        // Flush any remaining buffered text
+        if (buffer.trim() && !buffer.startsWith('[')) {
+            accumulatedAnswer += buffer;
+            resultContent.innerHTML = renderMarkdown(accumulatedAnswer);
+        }
+
+        searchBtn.disabled = false;
+        loadHistory();
+        searchInput.value = '';
+
     } catch (err) {
-        stopAgentCycling();
         loadingState.classList.add('hidden');
         searchBtn.disabled = false;
         showResult(query, `**Error:** Network error — ${err.message}`, 0);
     }
 }
+
 
 function showResult(query, answer, timeSec) {
     resultQuery.textContent = query;
