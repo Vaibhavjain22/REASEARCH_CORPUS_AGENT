@@ -6,28 +6,28 @@
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
-const navBtns        = $$('.nav-btn');
-const tabPanels      = $$('.tab-panel');
-const searchInput    = $('#search-input');
-const searchBtn      = $('#search-btn');
-const chips          = $$('.chip');
-const loadingState   = $('#loading-state');
+const navBtns = $$('.nav-btn');
+const tabPanels = $$('.tab-panel');
+const searchInput = $('#search-input');
+const searchBtn = $('#search-btn');
+const chips = $$('.chip');
+const loadingState = $('#loading-state');
 const resultContainer = $('#result-container');
-const resultContent  = $('#result-content');
-const resultQuery    = $('#result-query-label');
-const resultTime     = $('#result-time');
-const welcomeState   = $('#welcome-state');
-const historyList    = $('#history-list');
-const ingestForm     = $('#ingest-form');
-const ingestStatus   = $('#ingest-status');
-const ingestBtn      = $('#ingest-submit-btn');
-const mobileMenuBtn  = $('#mobile-menu-btn');
-const sidebar        = $('#sidebar');
+const resultContent = $('#result-content');
+const resultQuery = $('#result-query-label');
+const resultTime = $('#result-time');
+const welcomeState = $('#welcome-state');
+const historyList = $('#history-list');
+const ingestForm = $('#ingest-form');
+const ingestStatus = $('#ingest-status');
+const ingestBtn = $('#ingest-submit-btn');
+const mobileMenuBtn = $('#mobile-menu-btn');
+const sidebar = $('#sidebar');
 const sidebarOverlay = $('#sidebar-overlay');
 
 // ── Agent step cycling ───────────────────────────────────────
-const agentSteps     = ['step-planner', 'step-retriever', 'step-analyst', 'step-critic'];
-let agentInterval    = null;
+const agentSteps = ['step-planner', 'step-retriever', 'step-analyst', 'step-critic'];
+let agentInterval = null;
 
 
 // ══════════════════════════════════════════════════════════════
@@ -264,9 +264,9 @@ async function loadHistory() {
         // Attach click handlers
         historyList.querySelectorAll('.history-item').forEach((el) => {
             el.addEventListener('click', () => {
-                const query  = decodeURIComponent(el.dataset.query);
+                const query = decodeURIComponent(el.dataset.query);
                 const answer = decodeURIComponent(el.dataset.answer);
-                const time   = parseFloat(el.dataset.time);
+                const time = parseFloat(el.dataset.time);
 
                 // Switch to search tab
                 navBtns.forEach((b) => b.classList.remove('active'));
@@ -308,10 +308,10 @@ function formatTimestamp(ts) {
 ingestForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const title    = $('#ingest-title').value.trim();
-    const authors  = $('#ingest-authors').value.trim();
+    const title = $('#ingest-title').value.trim();
+    const authors = $('#ingest-authors').value.trim();
     const category = $('#ingest-category').value;
-    const date     = $('#ingest-date').value;
+    const date = $('#ingest-date').value;
     const abstract = $('#ingest-abstract').value.trim();
 
     if (!title || !abstract) return;
@@ -362,7 +362,7 @@ function showIngestStatus(type, html) {
 
 async function loadEvaluationData() {
     try {
-        const res  = await fetch('/api/evaluation');
+        const res = await fetch('/api/evaluation');
         const data = await res.json();
 
         if (data.error) return;
@@ -372,14 +372,14 @@ async function loadEvaluationData() {
         const aq = data.answer_quality;
 
         $('#eval-precision').textContent = `${(re['mean_precision@5'] * 100).toFixed(1)}%`;
-        $('#eval-recall').textContent    = `${(re['mean_recall@5'] * 100).toFixed(1)}%`;
-        $('#eval-keyword').textContent   = `${(aq.avg_keyword_coverage * 100).toFixed(1)}%`;
-        $('#eval-success').textContent   = aq.success_rate;
+        $('#eval-recall').textContent = `${(re['mean_recall@5'] * 100).toFixed(1)}%`;
+        $('#eval-keyword').textContent = `${(aq.avg_keyword_coverage * 100).toFixed(1)}%`;
+        $('#eval-success').textContent = aq.success_rate;
 
         // ── Precision & Recall bar chart ─────────────────────
-        const queries   = re.per_query.map((q, i) => `Q${i + 1}`);
+        const queries = re.per_query.map((q, i) => `Q${i + 1}`);
         const precision = re.per_query.map((q) => q['precision@5']);
-        const recall    = re.per_query.map((q) => q['recall@5']);
+        const recall = re.per_query.map((q) => q['recall@5']);
 
         new Chart($('#chart-precision-recall'), {
             type: 'bar',
@@ -433,7 +433,7 @@ async function loadEvaluationData() {
         });
 
         const typeLabels = Object.keys(typeMap);
-        const typeAvgs   = typeLabels.map((t) => {
+        const typeAvgs = typeLabels.map((t) => {
             const vals = typeMap[t];
             return vals.reduce((a, b) => a + b, 0) / vals.length;
         });
