@@ -408,8 +408,8 @@ To provide a smooth, modern UI without page transitions, the web client is desig
 ### 9. Async Parallel Retrieval & Deduplication
 To optimize pipeline latency for multi-hop queries, `vector_search_tool` supports parallel execution of multiple queries using `asyncio.gather` and LangChain's native `db.asimilarity_search`. Results are merged and deduplicated based on page content to keep the context window compact and relevant.
 
-### 10. Hybrid Search (BM25 + Dense Vectors) & Reciprocal Rank Fusion (RRF)
-To capture both exact keyword matches (e.g. specific algorithm acronyms, author names, or mathematical terms) and semantic concepts, the system implements Hybrid Search. Sparse BM25 keyword search is initialized lazily as a singleton from the 20,000 document chunks, and its results are fused with OpenAI dense vector search results using Reciprocal Rank Fusion (RRF) with balanced weights of 30% BM25 (`0.3`) and 70% Dense Vector (`0.7`).
+### 11. Real-Time Event & Response Streaming
+To provide immediate feedback while CrewAI's 4-agent pipeline executes, the backend implements streaming responses (`StreamingResponse`). Native CrewAI `task_callback` hooks push live agent completion events (`[STEP] Planner`, `[STEP] Retriever`, `[STEP] Analyst`, `[STEP] Critic`) through an `asyncio.Queue` to light up UI step badges as agents finish in real time. Once the final answer is validated, it streams word-by-word into the client, where Marked.js dynamically parses and renders structured Markdown (headings, bullet points, and inline citations).
 
 ---
 

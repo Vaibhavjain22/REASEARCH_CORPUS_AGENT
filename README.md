@@ -36,6 +36,7 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 - ✅ **Persistent History** — Sidebar showing past searches and response times
 - ⚡ **Async Parallel Retrieval** — Concurrently execute vector database searches for sub-queries to optimize system latency and merge/deduplicate results
 - 🔀 **Hybrid Search (BM25 + Vector)** — Combines BM25 sparse keyword search and OpenAI dense vector search via Reciprocal Rank Fusion (RRF)
+- 📡 **Real-Time Streaming Responses** — Live agent step progress tracking (`Planner` → `Retriever` → `Analyst` → `Critic`) and real-time word-by-word streaming answer rendering
 
 ---
 
@@ -130,7 +131,7 @@ For detailed architecture see [ARCHITECTURE.md](ARCHITECTURE.md)
 
 The project features a premium glassmorphic dark-theme Single Page Application (SPA) that acts as a cockpit for the multi-agent system:
 
-1. **Research Console**: Input research queries, select suggested query chips, and watch the agents execute visually through a status animation (Planner → Retriever → Analyst → Critic).
+1. **Research Console**: Input research queries, select suggested query chips, and watch the agents execute in real time with live step badge updates (`Planner` → `Retriever` → `Analyst` → `Critic`), followed by a smooth word-by-word streaming answer animation.
 2. **Paper Ingestion Hub**: Dynamically ingest custom research papers (Title, Authors, Category, Published Date, Abstract) directly into ChromaDB. The paper is parsed, chunked, embedded, and stored instantly.
 3. **Evaluation Dashboard**: Visualizes the system's performance using interactive Chart.js graphs, including Precision@K, Recall@K, keyword coverage, and category-wise performance breakdown.
 4. **History Sidebar**: Keeps track of previous queries, complete answers, and execution latency. Click any item to load its results instantly.
@@ -146,11 +147,14 @@ The project features a premium glassmorphic dark-theme Single Page Application (
 | **LLM** | OpenAI gpt-4o-mini |
 | **Vector Database** | ChromaDB |
 | **Embeddings** | OpenAI text-embedding-3-small |
+| **Sparse Retrieval** | rank-bm25 |
+| **Hybrid Ranking** | Reciprocal Rank Fusion (RRF) |
 | **Data Loading** | LangChain CSVLoader |
 | **Text Splitting** | LangChain RecursiveCharacterTextSplitter |
-| **Web Server Framework** | FastAPI (backend) |
+| **Web Server Framework** | FastAPI (backend with StreamingResponse) |
 | **Web Server Runner** | Uvicorn |
 | **Frontend Styling** | Vanilla CSS (Dark Premium Glassmorphic design) |
+| **Markdown Rendering** | Marked.js |
 | **Frontend Graphs** | Chart.js |
 | **Environment** | python-dotenv |
 | **Progress Tracking** | tqdm |
