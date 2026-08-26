@@ -46,10 +46,12 @@ task4 = Task(
         Check for accuracy and completeness against the retrieved papers.
         Add citations ONLY to real papers present in the retrieved context.
 
+        FORMATTING RULE: Format your response clearly using structured Markdown. Always put double newlines (\n\n) before headers (### Section Title) and before numbered items (1. Item, 2. Item). Never place headers or numbered points inline on the same line as preceding sentences.
+
         CRITICAL RULE: If the analyst output or retrieved papers state 'No relevant papers found', or if no relevant papers exist, DO NOT invent an answer, DO NOT use external knowledge, and DO NOT fabricate fake citations. Return ONLY: "No relevant scientific research papers were found in the dataset for this query."
 
         Do NOT include any planning steps, review logs, self-corrections, or intermediate thought processes in your final output.
     """,
-    expected_output="A clean, formatted final validated answer with inline citations, OR an explicit refusal if no relevant papers were found. No fake citations allowed.",
+    expected_output="A clean, well-formatted Markdown response with headers on separate lines and inline citations, OR an explicit refusal if no relevant papers were found.",
     agent=critic
 )

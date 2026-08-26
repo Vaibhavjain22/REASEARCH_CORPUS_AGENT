@@ -271,45 +271,21 @@ function stopAgentCycling() {
 
 function renderMarkdown(text) {
     if (!text) return '';
-    let html = text;
 
-    // Escape HTML (basic)
-    html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Pre-process text to ensure headers and numbered points get proper line breaks
+    let formatted = text
+        .replace(/([^\n])\s*(###+\s+)/g, '$1\n\n$2')
+        .replace(/([^\n])\s*(\d+\.\s+\*\*)/g, '$1\n\n$2')
+        .replace(/([^\n])\s*(\d+\.\s+[A-Z])/g, '$1\n\n$2');
 
-    // Code blocks
-    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-
-    // Inline code
-    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-    // Headers (### before ## before #)
-    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-    html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-
-    // Bold & Italic
+    if (window.marked && typeof window.marked.parse === 'function') {
+        return window.marked.parse(formatted);
+    }
+    // Simple fallback
+    let html = formatted.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-    // Blockquotes
-    html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
-
-    // Unordered lists
-    html = html.replace(/^[\-\*] (.+)$/gm, '<li>$1</li>');
-    html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
-
-    // Ordered lists
-    html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
-
-    // Horizontal rules
-    html = html.replace(/^---$/gm, '<hr>');
-
-    // Paragraphs — wrap remaining lines
-    html = html.replace(/^(?!<[hupblo]|<\/|<li|<hr)(.*\S.*)$/gm, '<p>$1</p>');
-
-    // Clean double breaks
-    html = html.replace(/\n{2,}/g, '\n');
-
+    html = html.replace(/\n\n/g, '<br><br>');
+    html = html.replace(/\n/g, '<br>');
     return html;
 }
 
