@@ -17,6 +17,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Disable CrewAI telemetry network calls to prevent shutdown timeout errors
+os.environ["CREWAI_TELEMETRY_OPT_OUT"] = "true"
+os.environ["OTEL_SDK_DISABLED"] = "true"
+
 import asyncio
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
@@ -79,6 +83,9 @@ app = FastAPI(
 
 # ── API Routes ─────────────────────────────────────────────────
 
+import queue
+import threading
+
 @app.post("/api/search")
 async def api_search(request: Request):
     """
@@ -96,41 +103,64 @@ async def api_search(request: Request):
 
     from src.crew import run_research_agent
 
-    async def generate():
+    event_queue = queue.Queue()
+    start_time = time.time()
+    result_container = {}
+
+    def worker():
         try:
-            # 1. Stream live progress messages immediately
-            yield "[STEP] 🧠 Planner is decomposing your query...\n"
-            yield "[STEP] 🔍 Retriever is searching 20,000 papers...\n"
-            yield "[STEP] 📊 Analyst is synthesizing findings...\n"
-            yield "[STEP] ✅ Critic is validating the answer...\n"
-
-            # 2. Run the agent in a background thread (non-blocking)
-            start = time.time()
-            result = await asyncio.to_thread(run_research_agent, query)
-            elapsed = round(time.time() - start, 2)
-            answer_text = str(result)
-
-            # 3. Persist to history
-            record = {
-                "id": str(uuid.uuid4()),
-                "query": query,
-                "answer": answer_text,
-                "time_seconds": elapsed,
-                "timestamp": datetime.now().isoformat(),
-            }
-            history = _load_history()
-            history.insert(0, record)
-            _save_history(history)
-
-            # 4. Signal start of answer with a separator the JS can detect
-            yield f"[ANSWER_START] {record['id']} {elapsed}\n"
-
-            # 5. Stream the answer word-by-word for a typing effect
-            for word in answer_text.split(" "):
-                yield word + " "
-
+            res = run_research_agent(query, event_queue=event_queue)
+            result_container["answer"] = str(res)
         except Exception as exc:
-            yield f"[ERROR] Agent execution failed: {str(exc)}\n"
+            result_container["error"] = str(exc)
+        finally:
+            event_queue.put({"type": "done"})
+
+    thread = threading.Thread(target=worker, daemon=True)
+    thread.start()
+
+    async def generate():
+        while True:
+            # Check for queued events without blocking the async loop
+            while not event_queue.empty():
+                evt = event_queue.get_nowait()
+                if evt.get("type") == "step":
+                    yield f"[STEP] {evt.get('agent')}\n"
+                elif evt.get("type") == "done":
+                    break
+
+            if not thread.is_alive():
+                break
+
+            await asyncio.sleep(0.5)
+
+        # Check for errors
+        if "error" in result_container:
+            yield f"[ERROR] Agent execution failed: {result_container['error']}\n"
+            return
+
+        elapsed = round(time.time() - start_time, 2)
+        answer_text = result_container.get("answer", "")
+
+        # Persist to history
+        record = {
+            "id": str(uuid.uuid4()),
+            "query": query,
+            "answer": answer_text,
+            "time_seconds": elapsed,
+            "timestamp": datetime.now().isoformat(),
+        }
+        history = _load_history()
+        history.insert(0, record)
+        _save_history(history)
+
+        # Signal start of answer
+        yield f"[ANSWER_START] {record['id']} {elapsed}\n"
+
+        # Stream answer word-by-word for typing effect
+        for word in answer_text.split(" "):
+            yield word + " "
+            await asyncio.sleep(0.01)
 
     return StreamingResponse(generate(), media_type="text/plain")
 
