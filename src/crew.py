@@ -1,13 +1,20 @@
+import sys
 import queue
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 from crewai import Crew, Process
 from agents import planner, retriever_agent, analyst, critic
 from tasks import task1, task2, task3, task4
 
 _AGENT_LABELS = {
-    "Research Planner": "Planner",
-    "Research Retriever": "Retriever",
+    "Research Query Planner": "Planner",
+    "Research Paper Retriever": "Retriever",
     "Research Analyst": "Analyst",
-    "Research Critic": "Critic",
+    "Answer Critic": "Critic",
 }
 
 def run_research_agent(query: str, event_queue: queue.Queue = None) -> str:
