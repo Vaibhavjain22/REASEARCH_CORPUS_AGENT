@@ -1,6 +1,6 @@
-# 🔬 Research Corpus Agent(RAG-BASED)
+# 🔬 Research Corpus Agent (RAG-BASED)
 
-An intelligent multi-agent AI system that answers complex queries over a large corpus of ArXiv research papers using **CrewAI**, **ChromaDB**, and **OpenAI GPT**.
+An intelligent multi-agent AI system that answers complex research queries over a large corpus of ArXiv scientific papers using **CrewAI**, **HyDE (Hypothetical Document Embeddings)**, **2-Stage Hybrid Retrieval (BM25 + OpenAI Embeddings + RRF)**, **Cohere Cross-Encoder Reranking**, and **OpenAI GPT**.
 
 ---
 
@@ -17,30 +17,29 @@ An intelligent multi-agent AI system that answers complex queries over a large c
 - [Evaluation Results](#evaluation-results)
 - [Example Queries](#example-queries)
 - [Known Limitations](#known-limitations)
+- [Future Improvements](#future-improvements)
 
 ---
 
 ## 📖 Project Overview
 
-The **Research Corpus Agent** is an AI-powered system designed to answer complex research questions over a large corpus of 136,000+ ArXiv scientific papers. The system uses a **multi-agent architecture** built with CrewAI where specialized agents collaborate to plan, retrieve, analyze, and validate answers. It is supported by a rich, modern web interface for interactive search, custom paper ingestion, and performance visualization.
+The **Research Corpus Agent** is an AI-powered system designed to answer complex research questions over a corpus of 136,000+ ArXiv scientific papers. Built with a collaborative **multi-agent architecture (CrewAI)**, the system decomposes queries, creates hypothetical document abstracts (HyDE), performs 2-stage hybrid search, reranks candidates using cross-encoders, and synthesizes grounded, well-structured scientific answers.
 
 ### Key Capabilities
 
-- ✅ **Summarization** — Summarize key contributions of research papers
-- ✅ **Cross-document Reasoning** — Connect insights across multiple papers
-- ✅ **Multi-hop Queries** — Answer questions requiring multiple retrieval steps
-- ✅ **Comparisons** — Compare methodologies, models, and approaches
-- ✅ **Aggregations** — Identify trends and patterns across papers
-- ✅ **Interactive Dashboard** — Premium dark-themed UI built with FastAPI and Chart.js
-- ✅ **Paper Ingestion Hub** — Dynamically load and index new papers into ChromaDB
-- ✅ **Persistent History** — Sidebar showing past searches and response times
-- ⚡ **Async Parallel Retrieval** — Concurrently execute vector database searches for sub-queries to optimize system latency and merge/deduplicate results
-- 🔀 **Hybrid Search (BM25 + Vector)** — Combines BM25 sparse keyword search and OpenAI dense vector search via Reciprocal Rank Fusion (RRF)
-- 📡 **Real-Time Streaming Responses** — Live agent step progress tracking (`Planner` → `Retriever` → `Analyst` → `Critic`) and real-time word-by-word streaming answer rendering
+- 🧠 **HyDE (Hypothetical Document Embeddings)** — The Planner generates an academic-style hypothetical abstract (~80–120 words) to bridge the semantic gap between short user queries and dense scientific paper abstracts.
+- 🔀 **2-Stage Hybrid Retrieval** —
+  - **Stage 1 (Candidate Generation)**: Combines BM25 keyword matching and Dense Vector search (embedded with HyDE) using Reciprocal Rank Fusion (RRF) with weights `[0.2, 0.8]` to pull top 15 candidate chunks.
+  - **Stage 2 (Cross-Encoder Reranking)**: Uses Cohere's state-of-the-art `rerank-v3.5` model to compute full cross-attention relevance scores, reranking candidates down to the top 3–5 most relevant papers.
+- 📝 **Structured Two-Tier Answering** —
+  - **Tier 1: Conceptual Framework & Practical Workflow**: Directly explains *what* the method is and provides a step-by-step procedure of *how* it is trained and deployed in practice.
+  - **Tier 2: Research Insights & Corpus Advancements**: Synthesizes empirical benchmarks, optimizations, and novel methods strictly grounded in the retrieved papers with verified citations.
+- ⚡ **Async Parallel Retrieval** — Concurrently executes vector database searches for sub-queries to optimize system latency and deduplicate results.
+- 📡 **Real-Time Streaming Responses** — Live agent step progress tracking (`Planner` → `Retriever` → `Analyst` → `Critic`) and real-time word-by-word streaming answer rendering.
+- 🖥️ **Interactive Cockpit UI** — Dark glassmorphic interface with query chips, dynamic paper ingestion hub, evaluation charts, and search history.
+- 🛡️ **Strict Out-of-Domain Guardrails** — Enforces minimum relevance score thresholds and refusal constraints to reject irrelevant queries without hallucinating.
 
 ---
-
-## 📊 Dataset Description
 
 ## 📊 Dataset Description
 
@@ -53,15 +52,7 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 | **Format** | CSV |
 | **Fields** | id, title, category, published_date, authors, summary |
 
-  **Note:** 
-  Due to GitHub's 100MB file size limit, only a
-  10,000 row sample is included in this repository at
- `data/arxiv_sample.csv`. The full dataset (170MB, 136,238 papers)
- can be downloaded from
- [Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv).
- To run ingestion on the full dataset, replace
- `data/arxiv_sample.csv` with the full file and run
- `python src/ingestion.py`.
+> **Note:** Due to GitHub's file size limits, a 10,000-row sample is included at `data/arxiv_sample.csv`. The full dataset (170MB, 136,238 papers) can be downloaded from [Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv). To run ingestion on the full dataset, place it at `data/arxiv_paper.csv` and run `python src/ingestion.py`.
 
 ### Categories Covered
 
@@ -87,43 +78,66 @@ The **Research Corpus Agent** is an AI-powered system designed to answer complex
 ## 🏗️ System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     DATA PLATFORM LAYER                     │
-│                                                             │
-│   ArXiv CSV (170MB)                                         │
-│        │                                                    │
-│   CSVLoader → Text Cleaning → RecursiveCharacterSplitter    │
-│        │                                                    │
-│   OpenAI Embeddings (text-embedding-3-small)                │
-│        │                                                    │
-│   ChromaDB Vector Store (20,000 chunks)                     │
-└─────────────────────────────────────────────────────────────┘
-                          ↕ similarity search & BM25 keyword matching
-┌─────────────────────────────────────────────────────────────┐
-│                     RETRIEVAL LAYER                         │
-│                                                             │
-│   Queries → Hybrid Search (BM25 + Vector) → RRF Fusion      │
-└─────────────────────────────────────────────────────────────┘
-                          ↕ retrieved docs
-┌─────────────────────────────────────────────────────────────┐
-│                  AGENTIC LAYER (CrewAI)                     │
-│                                                             │
-│   🧠 Planner    → Breaks query into search sub-questions    │
-│        ↓                                                    │
-│   🔍 Retriever  → Executes parallel searches via asyncio     │
-│        ↓                                                    │
-│   📊 Analyst    → Synthesizes answer from retrieved papers  │
-│        ↓                                                    │
-│   ✅ Critic     → Validates answer and adds citations       │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│                        OUTPUT                               │
-│   Final Answer + Paper Citations + Run Logs                 │
-└─────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                          USER RESEARCH QUERY                           │
+│             e.g., "What is logistic regression and how is it used?"    │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        AGENT 1: QUERY PLANNER                          │
+│   • Extracts targeted academic keywords (for BM25 sparse search)       │
+│   • Generates a Hypothetical Research Paper Abstract (HyDE)            │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                  ┌─────────────────┴─────────────────┐
+                  ▼                                   ▼
+       [Sparse BM25 Search]                 [Dense Vector Search]
+       Matches exact keywords               Embeds HyDE Abstract
+       across corpus chunks                 via text-embedding-3-small
+                  │                                   │
+                  └─────────────────┬─────────────────┘
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                 STAGE 1: RECIPROCAL RANK FUSION (RRF)                  │
+│       Fuses BM25 (0.2) + Dense Vector (0.8) → Top 15 Candidates        │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                 STAGE 2: COHERE CROSS-ENCODER RERANK                   │
+│       Scores (query, passage) pairs using Cohere rerank-v3.5           │
+│       Reranks 15 candidates → Selects Top 3–5 High-Confidence Docs     │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                      AGENT 2: PAPER RETRIEVER                          │
+│       Formats and passes verified top papers to analysis pipeline      │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                      AGENT 3: RESEARCH ANALYST                         │
+│   • Section 1: Conceptual Framework & Practical Workflow (What & How)   │
+│   • Section 2: Research Insights & Corpus Advancements                 │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        AGENT 4: ANSWER CRITIC                          │
+│   • Verifies claims against retrieved context (zero hallucinations)     │
+│   • Validates paper citations & applies clean Markdown formatting      │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        FINAL STREAMED RESPONSE                         │
+│             Real-time word-by-word streaming to FastAPI UI             │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-For detailed architecture see [ARCHITECTURE.md](ARCHITECTURE.md)
+For detailed architecture documentation, see [ARCHITECTURE.md](ARCHITECTURE.md)
 
 ---
 
@@ -147,8 +161,10 @@ The project features a premium glassmorphic dark-theme Single Page Application (
 | **LLM** | OpenAI gpt-4o-mini |
 | **Vector Database** | ChromaDB |
 | **Embeddings** | OpenAI text-embedding-3-small |
-| **Sparse Retrieval** | rank-bm25 |
-| **Hybrid Ranking** | Reciprocal Rank Fusion (RRF) |
+| **Sparse Retrieval** | rank-bm25 (BM25Okapi) |
+| **Dense Expansion** | HyDE (Hypothetical Document Embeddings) |
+| **Cross-Encoder Reranker** | Cohere Rerank API (`rerank-v3.5`) |
+| **Hybrid Ranking** | Reciprocal Rank Fusion (RRF with weights `[0.2, 0.8]`) |
 | **Data Loading** | LangChain CSVLoader |
 | **Text Splitting** | LangChain RecursiveCharacterTextSplitter |
 | **Web Server Framework** | FastAPI (backend with StreamingResponse) |
@@ -167,11 +183,11 @@ The project features a premium glassmorphic dark-theme Single Page Application (
 RESEARCH_CORPUS_AGENT/
 ├── src/
 │   ├── ingestion.py        # Data loading, cleaning, embedding, ChromaDB storage
-│   ├── retriever.py        # Vector search and result formatting
+│   ├── retriever.py        # 2-Stage HyDE + Hybrid Search + Cohere Reranking
 │   ├── tools.py            # CrewAI tool wrapping retriever functions
 │   ├── agents.py           # 4 CrewAI agents definition
-│   ├── tasks.py            # Task definitions for each agent
-│   ├── crew.py             # Crew assembly and execution
+│   ├── tasks.py            # Task definitions with HyDE & 2-tier structured response
+│   ├── crew.py             # Crew assembly, UTF-8 handler, and execution
 │   ├── evaluate.py         # Evaluation scripts (Recall@K, Precision@K)
 │   ├── test_queries.py     # 25 test queries for evaluation
 │   └── static/             # Frontend assets served by FastAPI
@@ -204,7 +220,8 @@ RESEARCH_CORPUS_AGENT/
 
 - Python 3.12+
 - Git
-- OpenAI API Key
+- OpenAI API Key ([platform.openai.com](https://platform.openai.com/))
+- Cohere API Key ([dashboard.cohere.com](https://dashboard.cohere.com/))
 
 ### Step 1 — Clone the Repository
 
@@ -237,8 +254,9 @@ pip install -r requirements.txt
 # Copy the example file
 copy .env.example .env
 
-# Open .env and add your API key
+# Open .env and add your API keys
 OPENAI_API_KEY=your_openai_api_key_here
+COHERE_API_KEY=your_cohere_api_key_here
 ```
 
 ### Step 5 — Download Dataset
@@ -396,21 +414,18 @@ Output: "Reinforcement learning combined with game tree search,
 
 ## ⚠️ Known Limitations
 
-1. **Out-of-domain queries** — System returns unrelated papers for non-research queries like food or sports
-2. **API Rate Limits** — OpenAI free/tier 1 rate limits (RPM/TPM) may cause delays
-3. **Dataset Coverage** — Only covers AI/ML papers — queries about other domains may return poor results
-4. **Chunk Size** — Fixed chunk size of 1500 may cut off important context in some papers
-5. **No Hybrid Search** — Currently uses only vector search; BM25 hybrid search not implemented
+1. **Domain Scope** — The corpus is specialized in AI, Machine Learning, Computer Vision, and NLP. Queries outside scientific and computational domains are rejected or return low relevance.
+2. **Cohere Trial Rate Limits** — Cohere's Developer Trial tier enforces a 10 requests/minute rate limit. If automated rapid querying exceeds this limit, the system gracefully falls back to the top RRF hybrid candidates.
+3. **Fixed Chunk Boundaries** — Fixed character chunking of 1,500 characters may occasionally divide complex multi-line mathematical proofs or pseudocode blocks.
 
 ---
 
 ## 🔮 Future Improvements
 
-- Implement BM25 hybrid search for better keyword matching
-- Add re-ranking step to improve retrieval quality
-- Expand dataset to full 1.7M ArXiv papers
-- Add LangSmith tracing for better observability
-- Implement streaming responses for faster output
+- **Scale to Full ArXiv Dataset** — Expand indexing to the complete 1.7M+ ArXiv corpus using Milvus or Qdrant for distributed vector storage.
+- **Multimodal Document Processing** — Integrate vision models (e.g., GPT-4o Vision) to extract, index, and reason over diagrams, architecture schematics, and benchmark tables directly from paper PDFs.
+- **Scientific Citation Graphs** — Incorporate graph-based retrieval (e.g., GraphRAG) to trace citation chains and follow prerequisite research literature.
+- **Production Observability** — Integrate OpenTelemetry or LangSmith for real-time latency breakdowns and token cost auditing across all four agents.
 
 ---
 

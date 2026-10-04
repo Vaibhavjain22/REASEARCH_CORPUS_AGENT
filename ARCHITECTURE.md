@@ -133,60 +133,59 @@ arxiv_paper.csv (170MB, 136,238 papers)
 
 ---
 
-## Layer 2 — Retrieval System
+## Layer 2 — 2-Stage Retrieval System (HyDE + Hybrid + Cohere Reranker)
 
 ### Overview
-The retrieval system converts user queries into vector embeddings and finds the most semantically similar document chunks from ChromaDB.
+The retrieval system employs a state-of-the-art **2-Stage Retrieval Architecture** combining sparse lexical matching, dense semantic embeddings with **HyDE**, and **Cohere Cross-Encoder Reranking**.
 
 ### Retrieval Flow
 
-The system supports **Async Parallel Retrieval** when multiple comma-separated queries are passed:
-
 ```
-        User Input Queries (comma-separated text)
-                         │
-                         ▼
-        ┌──────────────────────────────────┐
-        │       Query Tokenization         │
-        └────────────────┬─────────────────┘
-                         │
-           ┌─────────────┼─────────────┐ (Parallel async branches)
-           ▼             ▼             ▼
-      [Query 1]     [Query 2]     [Query 3]
-           │             │             │
-           ▼             ▼             ▼
-      Embed & Search Embed & Search Embed & Search (via db.asimilarity_search)
-           │             │             │
-           └─────────────┬─────────────┘
-                         │
-                         ▼
-        ┌──────────────────────────────────┐
-        │   Merge & Content Deduplication  │
-        └────────────────┬─────────────────┘
-                         │
-                         ▼
-        ┌──────────────────────────────────┐
-        │         format_results()         │ (Formatted for agents)
-        └──────────────────────────────────┘
+User Query + HyDE Abstract (from Planner)
+              │
+              ├──────────────────────────────────────────────┐
+              ▼                                              ▼
+   [BM25 Sparse Lexical Search]                  [ChromaDB Dense Vector Search]
+   Matches exact terms/keywords                  Embeds HyDE Abstract via
+   using BM25Okapi index                         text-embedding-3-small
+              │                                              │
+              └──────────────────────┬───────────────────────┘
+                                     ▼
+                  ┌─────────────────────────────────────┐
+                  │ STAGE 1: RECIPROCAL RANK FUSION     │
+                  │ Fuses BM25 (0.2) + Vector (0.8)     │
+                  │ Generates Top 15 Diverse Candidates │
+                  └──────────────────┬──────────────────┘
+                                     │
+                                     ▼
+                  ┌─────────────────────────────────────┐
+                  │ STAGE 2: COHERE CROSS-ENCODER       │
+                  │ Model: Cohere rerank-v3.5           │
+                  │ Cross-attention scoring on 15 docs  │
+                  │ Slices to Top 3–5 High-Score Docs   │
+                  └──────────────────┬──────────────────┘
+                                     │
+                                     ▼
+                  ┌─────────────────────────────────────┐
+                  │          format_results()           │
+                  │ Structured output for agent context │
+                  └─────────────────────────────────────┘
 ```
 
 ### Key Files
-- `src/retriever.py` — Vector search and formatting
-- `src/tools.py` — CrewAI tool wrapper
+- `src/retriever.py` — Hybrid search, HyDE embedding, RRF fusion, and Cohere reranker
+- `src/tools.py` — CrewAI tool wrapper supporting multi-query and `hyde_doc` parameters
 
-### Lazy Loading Pattern
+### Lazy Loading & Resilience Patterns
 
 ```python
-# ChromaDB loads only when first search is called
-# Prevents conflicts with CrewAI async initialization
-
+# ChromaDB, BM25, and Cohere client load lazily upon first query
 _db = None
+_bm25_retriever = None
+_cohere_client = None
 
-def get_db():
-    global _db
-    if _db is None:
-        _db = Chroma(...)   # loads on first call only
-    return _db
+# If Cohere API limits or network issues occur, the system
+# automatically and gracefully falls back to the top RRF candidates.
 ```
 
 ---
@@ -194,7 +193,7 @@ def get_db():
 ## Layer 3 — Agentic Layer
 
 ### Overview
-The agentic layer uses CrewAI to orchestrate 4 specialized agents that collaborate sequentially to answer research queries.
+The agentic layer uses CrewAI to orchestrate 4 specialized agents that collaborate sequentially to answer complex research queries.
 
 ### Agent Architecture
 
@@ -208,35 +207,40 @@ User Query
 │  ┌─────────────────────────────────────────────────┐    │
 │  │  Agent 1: PLANNER                               │    │
 │  │  Role   : Research Query Planner                │    │
-│  │  Goal   : Break query into search sub-questions │    │
+│  │  Goal   : Deconstruct query into search terms   │    │
+│  │           and generate a HyDE abstract (~100w)  │    │
 │  │  Tools  : None                                  │    │
-│  │  Output : Retrieval plan with search terms      │    │
+│  │  Output : Retrieval plan with HyDE abstract     │    │
 │  └───────────────────────┬─────────────────────────┘    │
-│                          │ passes plan                   │
+│                          │ passes plan + HyDE abstract   │
 │                          ▼                               │
 │  ┌─────────────────────────────────────────────────┐    │
 │  │  Agent 2: RETRIEVER                             │    │
 │  │  Role   : Research Paper Retriever              │    │
-│  │  Goal   : Fetch relevant papers from ChromaDB   │    │
+│  │  Goal   : Fetch 2-stage reranked papers         │    │
 │  │  Tools  : vector_search_tool ✅                 │    │
-│  │  Output : Top-K relevant paper chunks           │    │
+│  │  Output : Top high-confidence reranked papers   │    │
 │  └───────────────────────┬─────────────────────────┘    │
-│                          │ passes papers                 │
+│                          │ passes verified papers        │
 │                          ▼                               │
 │  ┌─────────────────────────────────────────────────┐    │
 │  │  Agent 3: ANALYST                               │    │
-│  │  Goal   : Synthesize comprehensive answer       │    │
+│  │  Role   : Research Analyst                      │    │
+│  │  Goal   : Synthesize 2-tier structured response: │    │
+│  │           Tier 1: Conceptual "What & How"       │    │
+│  │           Tier 2: Research Insights & Benchmarks│    │
 │  │  Tools  : None                                  │    │
-│  │  Output : Detailed answer with comparisons      │    │
+│  │  Output : Comprehensive grounded answer         │    │
 │  └───────────────────────┬─────────────────────────┘    │
-│                          │ passes answer                 │
+│                          │ passes draft answer           │
 │                          ▼                               │
 │  ┌─────────────────────────────────────────────────┐    │
 │  │  Agent 4: CRITIC                                │    │
 │  │  Role   : Answer Critic                         │    │
-│  │  Goal   : Validate accuracy and add citations   │    │
+│  │  Goal   : Fact-check claims against context,    │    │
+│  │           enforce zero hallucinations, and cite │    │
 │  │  Tools  : None                                  │    │
-│  │  Output : Final validated answer with sources   │    │
+│  │  Output : Final Markdown answer with citations  │    │
 │  └─────────────────────────────────────────────────┘    │
 └──────────────────────────────────────────────────────────┘
      │
