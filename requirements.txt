@@ -34,6 +34,7 @@ ragas
  
 # Utilities
 litellm
+cohere
  
 # Web Server
 fastapi
