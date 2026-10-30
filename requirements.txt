@@ -39,3 +39,6 @@ cohere
 # Web Server
 fastapi
 uvicorn
+
+# evaluation
+deepeval
