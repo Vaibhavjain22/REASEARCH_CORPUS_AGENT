@@ -1,0 +1,629 @@
+{
+  "evaluation_timestamp": "2026-10-07 13:39:29",
+  "evaluation_tier": "End-to-End Pipeline Evaluation (RAG Triad)",
+  "judge_model": "gpt-4o",
+  "total_queries": 20,
+  "overall_triad_scores": {
+    "mean_contextual_relevancy": 0.6215,
+    "mean_faithfulness": 0.9842,
+    "mean_answer_relevancy": 0.7947,
+    "rag_triad_composite_score": 0.8001,
+    "contextual_relevancy_pass_rate": "9/20",
+    "faithfulness_pass_rate": "20/20",
+    "answer_relevancy_pass_rate": "14/20",
+    "all_triad_passed_rate": "7/20",
+    "avg_pipeline_latency_seconds": 76.51
+  },
+  "category_breakdown": {
+    "aggregation": {
+      "count": 5,
+      "mean_contextual_relevancy": 0.5982,
+      "mean_faithfulness": 0.9875,
+      "mean_answer_relevancy": 0.5286,
+      "mean_triad_composite": 0.7047
+    },
+    "comparison": {
+      "count": 5,
+      "mean_contextual_relevancy": 0.5252,
+      "mean_faithfulness": 0.9846,
+      "mean_answer_relevancy": 0.8734,
+      "mean_triad_composite": 0.7944
+    },
+    "multi_hop": {
+      "count": 5,
+      "mean_contextual_relevancy": 0.6641,
+      "mean_faithfulness": 0.98,
+      "mean_answer_relevancy": 0.8058,
+      "mean_triad_composite": 0.8166
+    },
+    "simple": {
+      "count": 5,
+      "mean_contextual_relevancy": 0.6987,
+      "mean_faithfulness": 0.9846,
+      "mean_answer_relevancy": 0.9708,
+      "mean_triad_composite": 0.8847
+    }
+  },
+  "per_query_details": [
+    {
+      "id": "eval_01",
+      "type": "simple",
+      "query": "What is dynamic backtracking in search algorithms?",
+      "latency_seconds": 58.46,
+      "word_count": 603,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.7576,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.2727,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.27 because while the retrieval context includes discussions on backtracking improvements and techniques, such as moving backtrack points deeper in the search space and enhancing Prolog programs, the majority of the context focuses on unrelated topics like Graphplan's planning graph and dynamic CSPs, which do not directly address dynamic backtracking in search algorithms."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context. Everything aligns perfectly, showcasing a high level of accuracy and consistency. Keep up the great work!"
+      },
+      "answer_relevancy": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because the response perfectly addresses the question about dynamic backtracking in search algorithms without any irrelevant information. Great job on staying focused and relevant!"
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nDynamic backtracking is an advanced technique utilized in search algorithms focused on solving constraint satisfaction problems (CSPs). Unlike traditional backtracking methods that rigidly retrace steps upon hitting a dead end, dynamic backtracking a..."
+    },
+    {
+      "id": "eval_02",
+      "type": "simple",
+      "query": "Explain reinforcement learning with temporal difference methods",
+      "latency_seconds": 34.19,
+      "word_count": 575,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.8323,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.6364,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.64 because while the retrieval context includes several statements relevant to temporal difference methods, such as 'Parameter-free Gradient Temporal Difference Learning presents a novel parameter-free, gradient-based temporal difference learning algorithm' and 'Truncating Temporal Differences: On the Efficient Implementation of TD(lambda) for Reinforcement Learning suggests an alternative TD method,' many other statements focus on unrelated topics like 'memory-based methods' and 'temporal logic rewards,' which dilute the overall relevancy."
+      },
+      "faithfulness": {
+        "score": 0.9231,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.92 because the actual output incorrectly attributes the introduction of 'Unbiased Soft Q-Learning' to Liang et al., while the retrieval context clarifies that they authored 'Temporal-Difference Value Estimation via Uncertainty-Guided Soft Updates'. This minor discrepancy slightly affects the faithfulness of the output."
+      },
+      "answer_relevancy": {
+        "score": 0.9375,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.94 because the explanation of reinforcement learning with temporal difference methods is mostly accurate and relevant. However, the mention of memory-based reinforcement learning techniques slightly detracts from the focus on temporal difference methods, preventing a perfect score."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow  \n\nReinforcement Learning (RL) is a dynamic computational approach where agents learn the best actions to take in a given environment to maximize cumulative rewards. Within RL, Temporal Difference (TD) methods stand out as a powerful technique that br..."
+    },
+    {
+      "id": "eval_03",
+      "type": "simple",
+      "query": "What is word sense disambiguation in natural language processing?",
+      "latency_seconds": 34.72,
+      "word_count": 554,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.9259,
+      "all_triad_passed": true,
+      "contextual_relevancy": {
+        "score": 0.7778,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.78 because while several statements like 'Word Sense Disambiguation using a Bidirectional LSTM' and 'Incorporating Word Sense Disambiguation in Neural Language Models' are directly relevant to the input, some statements such as 'That's sick dude!: Automatic identification of word sense change across different timescales' are not directly related to word sense disambiguation, affecting the overall relevancy."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because the response perfectly addresses the question about word sense disambiguation in natural language processing without any irrelevant information. Great job on staying focused and relevant!"
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nWord Sense Disambiguation (WSD) is a crucial component of natural language processing (NLP) that aims to determine the correct meaning of a word based on its context, recognizing that many words have multiple meanings. The methodological approaches t..."
+    },
+    {
+      "id": "eval_04",
+      "type": "simple",
+      "query": "Explain support vector machines for classification",
+      "latency_seconds": 39.57,
+      "word_count": 722,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.9355,
+      "all_triad_passed": true,
+      "contextual_relevancy": {
+        "score": 0.8065,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.81 because while the retrieval context includes relevant information about Support Vector Machines (SVMs) being a supervised classification technique and their robustness, many statements focus on unrelated topics like 'land cover mapping' and 'ellipsoid method', which dilute the overall relevancy."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because the explanation of support vector machines for classification was clear, concise, and directly addressed the input without any irrelevant information. Great job!"
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nSupport Vector Machines (SVMs) are supervised machine learning models primarily used for classification tasks. The fundamental concept revolves around finding the optimal hyperplane that best separates different classes of data points in a high-dimen..."
+    },
+    {
+      "id": "eval_05",
+      "type": "simple",
+      "query": "What is naive bayes classification method?",
+      "latency_seconds": 47.51,
+      "word_count": 657,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.9722,
+      "all_triad_passed": true,
+      "contextual_relevancy": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because the retrieval context is perfectly aligned with the input, featuring multiple references to the Naive Bayes classification method, such as 'A New Hierarchical Redundancy Eliminated Tree Augmented Naive Bayes Classifier' and 'The Mysterious Optimality of Naive Bayes.' Great job on the relevancy!"
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output perfectly aligns with the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 0.9167,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.92 because the explanation effectively covers the core principles of the Naive Bayes classification method. However, it includes references to Hierarchical Redundancy Removal and theoretical backing by Kupervasser and Vardy, which are not directly relevant to the topic, slightly lowering the score."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nThe Naive Bayes classification method is a fundamental statistical technique in machine learning used primarily for classification tasks. It operates on the principle of applying Bayes' theorem with the assumption that the features (predictor variabl..."
+    },
+    {
+      "id": "eval_06",
+      "type": "multi_hop",
+      "query": "How does reinforcement learning apply to game tree search and what role does temporal difference learning play?",
+      "latency_seconds": 37.62,
+      "word_count": 731,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.8633,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.6316,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.63 because while the retrieval context includes relevant insights on reinforcement learning's application in game environments and temporal difference learning, many statements focus on unrelated topics like symbolic reasoning and hierarchical reinforcement learning. Relevant statements discuss the role of reinforcement learning in strategic games and improvements in temporal difference learning, but the overall context lacks direct focus on game tree search and temporal difference learning integration."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context. Everything aligns perfectly, showcasing a high level of accuracy and consistency. Keep up the great work!"
+      },
+      "answer_relevancy": {
+        "score": 0.9583,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.96 because the response effectively addresses how reinforcement learning applies to game tree search and the role of temporal difference learning. The minor irrelevant statements about setup steps and initialization do not significantly detract from the overall relevance and clarity of the answer."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nReinforcement Learning (RL) is a machine learning paradigm wherein an agent learns to make decisions by interacting with an environment. The agent receives feedback in the form of rewards or penalties, enabling it to optimize its policy over time to ..."
+    },
+    {
+      "id": "eval_07",
+      "type": "multi_hop",
+      "query": "How do neural networks combined with evolutionary computing improve optimization problems?",
+      "latency_seconds": 92.98,
+      "word_count": 584,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.8286,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.8,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.80 because while the retrieval context includes relevant discussions on evolutionary strategies and neural networks, such as CoDeepNEAT and the STEADE model, it also contains irrelevant information about 'civil engineering contexts,' which does not pertain to the general optimization problems addressed by neural networks and evolutionary computing."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 0.6857,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.69 because the answer provides some relevant insights into the benefits and outcomes of combining neural networks with evolutionary computing, such as improved performance and adaptability. However, it falls short of a higher score due to the inclusion of several irrelevant statements that focus on applications, outcomes, and evaluations rather than directly explaining the mechanism of improvement in optimization problems."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nNeural networks (NNs) and evolutionary computing (EC) are two powerful paradigms used for solving complex optimization problems. The integration of these approaches facilitates a hybrid methodology that enhances search capabilities and solution quali..."
+    },
+    {
+      "id": "eval_08",
+      "type": "multi_hop",
+      "query": "How does minimum description length principle apply to substructure discovery and knowledge representation?",
+      "latency_seconds": 35.21,
+      "word_count": 651,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.7462,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.5,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.50 because while the retrieval context includes relevant information about the SUBDUE system and its use of the minimum description length principle for substructure discovery, much of the context focuses on unrelated topics like network models and Bayesian Networks, which do not directly address the input question."
+      },
+      "faithfulness": {
+        "score": 0.9,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.90 because the actual output incorrectly attributes the use of MDL in the SUBDUE system, whereas the retrieval context specifies that SUBDUE employs a computationally-bounded inexact graph match for identifying similar substructures. This minor discrepancy slightly affects the faithfulness of the output."
+      },
+      "answer_relevancy": {
+        "score": 0.8387,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.84 because the answer effectively addresses the application of the minimum description length (MDL) principle to substructure discovery and knowledge representation. However, it includes several general data processing steps like data acquisition, preprocessing, and model optimization, which are not directly relevant to the specific question about MDL and substructure discovery. Despite these irrelevant elements, the core explanation remains strong, maintaining a relatively high score."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow  \n\nThe Minimum Description Length (MDL) principle is a statistical modeling approach focused on encoding data in such a way that the description length is minimized. It serves as an important theoretical basis for tasks such as substructure discovery ..."
+    },
+    {
+      "id": "eval_09",
+      "type": "multi_hop",
+      "query": "How do boosting methods improve word sense disambiguation and text classification tasks?",
+      "latency_seconds": 127.84,
+      "word_count": 584,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.7051,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.5,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.50 because while the retrieval context includes relevant statements like 'AdaBoost.MH surpasses Naive Bayes in WSD' and 'LazyBoosting optimizes feature space for large datasets,' much of the context focuses on comparisons and concepts not directly tied to the input question, such as 'Bagging vs. Boosting' and 'multiclass boosting framework,' which dilute the overall relevancy."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 0.6154,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.62 because while the output provides a comprehensive overview of the boosting process, many details are not directly related to its impact on word sense disambiguation (WSD) and text classification. The inclusion of these process-oriented details, such as weight adjustments and comparisons with bagging, detracts from the focus on the specific improvements boosting offers in WSD and text classification. However, the score is not lower because the output does touch upon relevant aspects of boosting, albeit indirectly, which contributes to a partial understanding of its benefits in these tasks."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Boosting Methods Definition:**  \nBoosting is an ensemble learning technique aimed at improving the performance of weak learners by combining multiple models to create a strong predictive model. It works by incrementally building a series of models,..."
+    },
+    {
+      "id": "eval_10",
+      "type": "multi_hop",
+      "query": "How does dimensionality reduction using manifold learning help in computer vision pattern recognition?",
+      "latency_seconds": 36.46,
+      "word_count": 660,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.94,
+      "all_triad_passed": true,
+      "contextual_relevancy": {
+        "score": 0.8889,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.89 because while the retrieval context includes relevant statements about dimensionality reduction and manifold learning, such as 'Dimensionality reduction techniques are used to reduce the high dimensionality of inner layers' and 'Manifold learning is a popular and quickly-growing subfield of machine learning,' it also contains irrelevant information focusing on feature extraction in CNNs, which is not directly related to the input question."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 0.931,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.93 because the answer effectively addresses how manifold learning aids in dimensionality reduction for computer vision pattern recognition. However, it includes some general machine learning concepts like 'pre-processing' and 'model fine-tuning' that are not specific to manifold learning, slightly affecting the score."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nDimensionality reduction through manifold learning plays a pivotal role in computer vision pattern recognition by reducing the complexity of data while maintaining its essential structure. The key concept behind manifold learning is that high-dimensi..."
+    },
+    {
+      "id": "eval_11",
+      "type": "comparison",
+      "query": "Compare total-order planning and partial-order planning approaches in AI",
+      "latency_seconds": 34.11,
+      "word_count": 718,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.8111,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.4333,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.43 because while the retrieval context includes relevant discussions on partial-order planning, such as the analysis of its principles and comparison with total-order planning, many statements focus on unrelated topics like numeric planning and multi-agent systems, which dilute the overall relevancy."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context. Everything aligns perfectly, showcasing a high level of accuracy and consistency. Great job!"
+      },
+      "answer_relevancy": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because the response perfectly addresses the comparison between total-order and partial-order planning approaches in AI without any irrelevant statements. Great job on staying focused and relevant!"
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Total-Order Planning**  \nTotal-order planning refers to an approach where actions are organized in a strict sequence. This means that the approach explicitly defines the order in which all actions must occur, making it relatively straightforward to..."
+    },
+    {
+      "id": "eval_12",
+      "type": "comparison",
+      "query": "Compare naive bayes and exemplar based approaches to word sense disambiguation",
+      "latency_seconds": 37.81,
+      "word_count": 617,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.7753,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.4444,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.44 because while there are relevant statements discussing Naive Bayes and Exemplar-based approaches to Word Sense Disambiguation, the majority of the context focuses on unrelated topics such as bidirectional LSTM models and bilingual WSD, which do not pertain to the comparison of these two methods."
+      },
+      "faithfulness": {
+        "score": 0.9231,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.92 because the actual output incorrectly attributes the application of the AdaBoost.MH framework to Escudero et al. (2010), while the retrieval context only discusses its use in Word Sense Disambiguation without such attribution."
+      },
+      "answer_relevancy": {
+        "score": 0.9583,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.96 because the response effectively compares Naive Bayes and Exemplar-based approaches to word sense disambiguation, addressing the core of the input query. However, the mention of the AdaBoost.MH framework slightly detracts from the focus, preventing a perfect score."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Naive Bayes Approach**: \nNaive Bayes is a probabilistic classifier based on Bayes' theorem, assuming independence among predictors. In the context of Word Sense Disambiguation (WSD), the goal is to classify ambiguous words based on the context they..."
+    },
+    {
+      "id": "eval_13",
+      "type": "comparison",
+      "query": "Compare symbolic pattern associator and connectionist models for language learning",
+      "latency_seconds": 34.27,
+      "word_count": 605,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.8495,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.5484,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.55 because while the retrieval context includes relevant discussions on symbolic pattern associators and connectionist models, such as 'Learning the past tense of English verbs' and 'head-to-head comparisons on the generalization ability between ANN models and the SPA,' many statements focus on unrelated topics like 'decision-tree learning algorithms' and 'LLM-empowered Autonomous Agents,' which dilute the overall relevancy."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because the response perfectly addresses the comparison between symbolic pattern associator and connectionist models for language learning, with no irrelevant statements present. Great job on staying focused and relevant!"
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\n#### Symbolic Pattern Associator (SPA)\nThe Symbolic Pattern Associator leverages the principles of symbolic AI, primarily focusing on rule-based processing and logical representation. Specifically, it utilizes decision tree learning algorithms, such ..."
+    },
+    {
+      "id": "eval_14",
+      "type": "comparison",
+      "query": "Compare decision tree induction methods and their complexity tradeoffs",
+      "latency_seconds": 30.45,
+      "word_count": 608,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.914,
+      "all_triad_passed": true,
+      "contextual_relevancy": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because the retrieval context is highly relevant to the input, providing a comprehensive overview of various decision tree induction methods and their complexity tradeoffs. The context includes discussions on multi-relational decision trees, oblique decision trees, fuzzy decision trees, and cost-sensitive learning algorithms, all of which directly relate to the input query."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 0.7419,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.74 because the output provides some relevant information about decision trees, but it lacks focus on comparing induction methods and their complexity tradeoffs. The repeated emphasis on the structure and application of decision trees, rather than the specific methods and tradeoffs, prevents a higher score. However, the inclusion of decision tree-related content maintains a moderate level of relevancy."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nDecision tree induction methods are algorithms that generate a model to represent decisions and their potential consequences, typically in the form of a tree structure. Each internal node represents a test on an attribute, each branch corresponds to ..."
+    },
+    {
+      "id": "eval_15",
+      "type": "comparison",
+      "query": "Compare linear function approximation and nonlinear methods in reinforcement learning",
+      "latency_seconds": 105.7,
+      "word_count": 719,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.6222,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.2,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.20 because the majority of the context focuses on unrelated topics such as confusion between predictors and inhibitors, feature selection, and non-Markovian rewards, which do not directly address the comparison of linear and nonlinear methods in reinforcement learning. However, there is some relevance in the discussion of TD(0) and Sarsa(0) with linear function approximation and the proposal of an online RL prediction algorithm that identifies useful nonlinear features, which partially aligns with the input topic."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 0.6667,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.67 because while the output includes relevant information about reinforcement learning, it contains several general statements that do not specifically address the comparison between linear and nonlinear methods. These irrelevant details dilute the focus on the core topic, preventing a higher score. However, the presence of some pertinent insights maintains the score at its current level."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Linear Function Approximation in Reinforcement Learning:**\n\nLinear function approximation in reinforcement learning (RL) refers to the method of approximating value functions or policies using linear combinations of features derived from the state ..."
+    },
+    {
+      "id": "eval_16",
+      "type": "aggregation",
+      "query": "What are the common evaluation methods used across machine learning research papers?",
+      "latency_seconds": 0.0,
+      "word_count": 0,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.3333,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.0,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.00 because the retrieval context contains no relevant information about evaluation methods in machine learning research papers, as evidenced by the statement 'Pipeline execution failed.' which is unrelated to the input query."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 0.0,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.00 because the output contains multiple irrelevant statements that do not address the question about evaluation methods in machine learning research papers. The mentions of pipeline execution failure, InternalServerError, OpenAIException, and connection errors are unrelated to the topic, resulting in a score that reflects a lack of relevant content."
+      },
+      "final_answer_preview": "Pipeline execution failed: litellm.InternalServerError: InternalServerError: OpenAIException - Connection error."
+    },
+    {
+      "id": "eval_17",
+      "type": "aggregation",
+      "query": "What optimization techniques are most commonly used in computer vision papers?",
+      "latency_seconds": 32.87,
+      "word_count": 669,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.5855,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.3636,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.36 because while the retrieval context mentions 'optimization techniques involved in improving the deployment of deep neural networks in computer vision applications through network compression methods such as pruning and quantization,' most statements focus on unrelated topics like 'performance of deep learning models in image recognition' and 'visualizing virtual environments.'"
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context. Everything aligns perfectly, showcasing a high level of accuracy and consistency."
+      },
+      "answer_relevancy": {
+        "score": 0.3929,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.39 because the output contains numerous irrelevant statements that describe processes, applications, and benefits rather than directly addressing the specific optimization techniques used in computer vision papers. While some relevant information might be present, the prevalence of unrelated content significantly lowers the score."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nOptimization techniques in computer vision involve various methodologies aimed at enhancing the performance and efficiency of algorithms used for visual data analysis. The most common optimization techniques can be categorized generally into three gr..."
+    },
+    {
+      "id": "eval_18",
+      "type": "aggregation",
+      "query": "What are the main challenges reported in natural language processing research?",
+      "latency_seconds": 631.64,
+      "word_count": 525,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.9833,
+      "all_triad_passed": true,
+      "contextual_relevancy": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because the retrieval context perfectly aligns with the input, providing a comprehensive overview of challenges in NLP research across various languages and applications, such as Turkish and Persian language processing, dialog systems, and emotion recognition."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy and consistency!"
+      },
+      "answer_relevancy": {
+        "score": 0.95,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.95 because the response effectively addresses the main challenges in natural language processing research, with only a minor mention of deployment, which is not directly relevant to the research challenges. Overall, the answer is highly relevant and informative."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow  \n\nNatural Language Processing (NLP) aims to enable machines to understand, interpret, and generate human language in a valuable way. The methodology predominantly involves several stages:  \n\n1. **Data Collection**: Involves gathering vast amounts of ..."
+    },
+    {
+      "id": "eval_19",
+      "type": "aggregation",
+      "query": "What knowledge representation techniques are used in artificial intelligence systems?",
+      "latency_seconds": 36.4,
+      "word_count": 619,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.8258,
+      "all_triad_passed": true,
+      "contextual_relevancy": {
+        "score": 0.7273,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.73 because while the retrieval context includes relevant statements about knowledge representation techniques in AI, such as 'hybrid mechanisms by combining two or more methods' and 'Neurosymbolic AI which combines neural networks and knowledge-guided symbolic approaches,' a significant portion of the context is focused on unrelated topics like environmental systems and workshops."
+      },
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context. Everything aligns perfectly, showcasing a high level of accuracy and consistency. Keep up the great work!"
+      },
+      "answer_relevancy": {
+        "score": 0.75,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.75 because the response correctly identifies some knowledge representation techniques used in AI, such as semantic networks and ontologies. However, it includes several irrelevant statements about processes and components like data acquisition and neural network layers, which are not directly related to knowledge representation techniques. Despite these irrelevant points, the core information provided is mostly accurate, maintaining a relatively high score."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\nKnowledge representation (KR) techniques in artificial intelligence (AI) systems are varied, each with unique methodologies and operational frameworks. Here are some of the primary techniques:\n\n#### a. Symbolic Representation\nSymbolic representation ..."
+    },
+    {
+      "id": "eval_20",
+      "type": "aggregation",
+      "query": "What are the most used learning algorithms reported across neural and evolutionary computing papers?",
+      "latency_seconds": 42.36,
+      "word_count": 537,
+      "retrieved_chunks_count": 1,
+      "triad_composite_score": 0.7958,
+      "all_triad_passed": false,
+      "contextual_relevancy": {
+        "score": 0.9,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.90 because the retrieval context includes several relevant studies on evolutionary and neural computing algorithms, such as 'Evolutionary Algorithms for Fuzzy Cognitive Maps' and 'Evolving Deep Neural Networks,' which align well with the input query. However, the mention of 'physics-based opto-electronic hardware' slightly detracts from the overall relevancy."
+      },
+      "faithfulness": {
+        "score": 0.9375,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.94 because the actual output inaccurately claims that Omran and al-Adwani introduced a hybrid approach, whereas the retrieval context specifies their exploration of using CODEQ to train feed-forward neural networks, not a hybrid approach. This minor discrepancy slightly affects the faithfulness of the output."
+      },
+      "answer_relevancy": {
+        "score": 0.55,
+        "passed": false,
+        "threshold": 0.7,
+        "reason": "The score is 0.55 because while the output contains relevant information about learning algorithms, it includes several statements that diverge from the main focus of the input question, which is the prevalence of these algorithms in literature. These irrelevant statements dilute the overall relevance, preventing a higher score. However, the presence of some pertinent details maintains the score above the midpoint."
+      },
+      "final_answer_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Learning Algorithms Overview**  \nLearning algorithms within neural and evolutionary computing are methodologies that allow systems to improve their performance on tasks through experience. Neural computing predominantly utilizes techniques such as ..."
+    }
+  ]
+}

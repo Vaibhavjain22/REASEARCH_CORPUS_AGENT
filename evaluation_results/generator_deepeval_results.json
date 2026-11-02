@@ -1,0 +1,317 @@
+{
+  "evaluation_timestamp": "2026-10-07 11:18:42",
+  "evaluation_tier": "Generator Independent Evaluation",
+  "judge_model": "gpt-4o",
+  "total_queries": 20,
+  "overall_metrics": {
+    "mean_faithfulness": 0.9728,
+    "pass_rate": "20/20",
+    "pass_percentage": "100.0%",
+    "avg_generation_time_seconds": 17.49,
+    "avg_word_count": 641.4
+  },
+  "category_breakdown": {
+    "aggregation": {
+      "count": 5,
+      "mean_faithfulness": 0.9765,
+      "pass_rate": "5/5"
+    },
+    "comparison": {
+      "count": 5,
+      "mean_faithfulness": 0.9733,
+      "pass_rate": "5/5"
+    },
+    "multi_hop": {
+      "count": 5,
+      "mean_faithfulness": 0.9733,
+      "pass_rate": "5/5"
+    },
+    "simple": {
+      "count": 5,
+      "mean_faithfulness": 0.9682,
+      "pass_rate": "5/5"
+    }
+  },
+  "per_query_details": [
+    {
+      "id": "eval_01",
+      "type": "simple",
+      "query": "What is dynamic backtracking in search algorithms?",
+      "word_count": 602,
+      "generation_time_seconds": 22.81,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\nDynamic backtracking is a search algorithm strategy designed to enhance traditional backtracking methods by enabling the search process to revisit previously explored points in the search tree without discarding the progress made deeper within the sea...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_02",
+      "type": "simple",
+      "query": "Explain reinforcement learning with temporal difference methods",
+      "word_count": 579,
+      "generation_time_seconds": 14.12,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow  \nReinforcement learning (RL) is a branch of machine learning where an agent learns to make decisions by interacting with an environment to maximize cumulative reward. Temporal Difference (TD) methods are a fundamental family of algorithms in RL, allo...",
+      "faithfulness": {
+        "score": 0.9,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.90 because the actual output incorrectly claims that the paper introduces a state-specific learning rate, while the retrieval context indicates that the paper derives an equation without the learning rate parameter alpha. This minor discrepancy slightly affects the faithfulness of the output."
+      }
+    },
+    {
+      "id": "eval_03",
+      "type": "simple",
+      "query": "What is word sense disambiguation in natural language processing?",
+      "word_count": 655,
+      "generation_time_seconds": 18.19,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\nWord Sense Disambiguation (WSD) is a crucial task in Natural Language Processing (NLP) aimed at determining which sense (or meaning) of a word is activated by its use in a particular context. The challenge arises from words that have multiple meaning...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_04",
+      "type": "simple",
+      "query": "Explain support vector machines for classification",
+      "word_count": 640,
+      "generation_time_seconds": 16.9,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\nSupport Vector Machines (SVMs) are supervised learning models primarily utilized for classification tasks, akin to an advanced binary classifier derived from Statistical Learning Theory. Their strength lies in constructing a hyperplane or a set of hyp...",
+      "faithfulness": {
+        "score": 0.9412,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.94 because the actual output inaccurately attributes a method for handling non-convex loss functions to Luss and d'Aspremont, which is not supported by the retrieval context."
+      }
+    },
+    {
+      "id": "eval_05",
+      "type": "simple",
+      "query": "What is naive bayes classification method?",
+      "word_count": 643,
+      "generation_time_seconds": 17.54,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\nNaive Bayes classification is a statistical technique for classifying data based on Bayes' Theorem, with the assumption that features are independent given the class label. This method is particularly effective for large datasets and is widely used i...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_06",
+      "type": "multi_hop",
+      "query": "How does reinforcement learning apply to game tree search and what role does temporal difference learning play?",
+      "word_count": 711,
+      "generation_time_seconds": 20.67,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\nReinforcement Learning (RL) is a branch of machine learning that focuses on how agents ought to take actions in an environment to maximize some notion of cumulative reward. Within the context of game tree search, reinforcement learning provides a met...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_07",
+      "type": "multi_hop",
+      "query": "How do neural networks combined with evolutionary computing improve optimization problems?",
+      "word_count": 668,
+      "generation_time_seconds": 16.05,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\nThe integration of neural networks with evolutionary computing revolves around the use of Evolutionary Artificial Neural Networks (EANNs). This approach employs evolutionary algorithms to enhance ANN capabilities by optimizing connection weights, arch...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy!"
+      }
+    },
+    {
+      "id": "eval_08",
+      "type": "multi_hop",
+      "query": "How does minimum description length principle apply to substructure discovery and knowledge representation?",
+      "word_count": 689,
+      "generation_time_seconds": 17.78,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\nThe Minimum Description Length (MDL) principle is a key concept in information theory and statistical modeling, serving as a method for model selection and evaluation. In the context of substructure discovery and knowledge representation, MDL focuses...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context. Everything aligns perfectly, showcasing a high level of accuracy and consistency."
+      }
+    },
+    {
+      "id": "eval_09",
+      "type": "multi_hop",
+      "query": "How do boosting methods improve word sense disambiguation and text classification tasks?",
+      "word_count": 540,
+      "generation_time_seconds": 13.55,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow  \nBoosting methods, particularly the AdaBoost.MH algorithm as described in the research papers, are ensemble learning techniques designed to improve the accuracy of classifiers for tasks such as Word Sense Disambiguation (WSD) and text classification....",
+      "faithfulness": {
+        "score": 0.8667,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.87 because the actual output introduces two minor discrepancies: it claims LazyBoosting accelerates by reducing the feature space and attributes performance confirmation to Escudero et al., neither of which are supported by the retrieval context. Despite these, the overall alignment remains strong."
+      }
+    },
+    {
+      "id": "eval_10",
+      "type": "multi_hop",
+      "query": "How does dimensionality reduction using manifold learning help in computer vision pattern recognition?",
+      "word_count": 623,
+      "generation_time_seconds": 16.02,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\nDimensionality reduction (DR) using manifold learning is a technique aimed at extracting lower-dimensional representations from high-dimensional datasets while preserving essential information. This approach is crucial in computer vision for pattern r...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_11",
+      "type": "comparison",
+      "query": "Compare total-order planning and partial-order planning approaches in AI",
+      "word_count": 755,
+      "generation_time_seconds": 17.96,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Total-Order Planning:**  \nTotal-order planning refers to a planning methodology in which the sequence of actions is strictly defined, meaning that every action must follow its predecessor in the order established by the planner. This approach is st...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context. Everything aligns perfectly, showcasing a high level of accuracy and consistency. Keep up the great work!"
+      }
+    },
+    {
+      "id": "eval_12",
+      "type": "comparison",
+      "query": "Compare naive bayes and exemplar based approaches to word sense disambiguation",
+      "word_count": 711,
+      "generation_time_seconds": 16.81,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Naive Bayes Approach**:  \nNaive Bayes is a probabilistic classifier based on Bayes' theorem, with the assumption that the features (or attributes) involved are conditionally independent given the class label. In the context of Word Sense Disambigua...",
+      "faithfulness": {
+        "score": 0.8667,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.87 because the actual output introduces modifications and multiple algorithms by Escudero et al. (2023) that are not mentioned in the retrieval context, indicating minor discrepancies."
+      }
+    },
+    {
+      "id": "eval_13",
+      "type": "comparison",
+      "query": "Compare symbolic pattern associator and connectionist models for language learning",
+      "word_count": 704,
+      "generation_time_seconds": 17.35,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Symbolic Pattern Associator (SPA):**  \nThe SPA is a decision-tree based learning algorithm, specifically utilizing the ID3 algorithm. This method focuses on symbolic representations and their patterns to achieve language learning, notably in acquir...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions between the actual output and the retrieval context. Everything aligns perfectly, showcasing a high level of accuracy and consistency. Keep up the great work!"
+      }
+    },
+    {
+      "id": "eval_14",
+      "type": "comparison",
+      "query": "Compare decision tree induction methods and their complexity tradeoffs",
+      "word_count": 650,
+      "generation_time_seconds": 16.69,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\nDecision tree induction is a machine learning methodology used for classification and regression tasks. It involves constructing a model that predicts the value of a target variable by learning simple decision rules inferred from the training data. T...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_15",
+      "type": "comparison",
+      "query": "Compare linear function approximation and nonlinear methods in reinforcement learning",
+      "word_count": 686,
+      "generation_time_seconds": 17.68,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\n**Linear Function Approximation**  \nLinear function approximation in reinforcement learning (RL) involves estimating value functions as linear combinations of features extracted from state observations. The idea is to simplify the representation of t...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_16",
+      "type": "aggregation",
+      "query": "What are the common evaluation methods used across machine learning research papers?",
+      "word_count": 622,
+      "generation_time_seconds": 21.51,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\nEvaluation methods in machine learning (ML) research papers primarily focus on two major frameworks: task-oriented evaluation and ability-oriented evaluation.\n\n- **Task-oriented Evaluation**: This traditional methodology is centered on the performanc...",
+      "faithfulness": {
+        "score": 0.9412,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.94 because the actual output slightly misrepresents the retrieval context by categorizing human discrimination, problem benchmarks, and peer confrontation as elements of task-oriented evaluation, whereas they are broader AI evaluation methods. This minor discrepancy slightly affects the faithfulness but overall maintains a high level of accuracy."
+      }
+    },
+    {
+      "id": "eval_17",
+      "type": "aggregation",
+      "query": "What optimization techniques are most commonly used in computer vision papers?",
+      "word_count": 598,
+      "generation_time_seconds": 22.71,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\nOptimization techniques in computer vision primarily aim to improve the efficiency and effectiveness of models. In the context of the papers provided, a notable technique discussed is the reduction of floating-point precision for neural networks depl...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating that the actual output is perfectly aligned with the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_18",
+      "type": "aggregation",
+      "query": "What are the main challenges reported in natural language processing research?",
+      "word_count": 400,
+      "generation_time_seconds": 12.52,
+      "actual_output_preview": "Natural Language Processing (NLP) is an interdisciplinary field combining computer science and linguistics to enable computers to comprehend, interpret, and manipulate human languages meaningfully. The core algorithms and methodologies for NLP tasks include tokenization, part-of-speech tagging, name...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_19",
+      "type": "aggregation",
+      "query": "What knowledge representation techniques are used in artificial intelligence systems?",
+      "word_count": 649,
+      "generation_time_seconds": 14.58,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow  \n\nKnowledge representation (KR) in artificial intelligence (AI) refers to the methods and frameworks used to model information, allowing computers to understand, reason, and make informed decisions based on that information. The foundational aim of K...",
+      "faithfulness": {
+        "score": 1.0,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 1.00 because there are no contradictions, indicating a perfect alignment between the actual output and the retrieval context. Great job maintaining accuracy and consistency!"
+      }
+    },
+    {
+      "id": "eval_20",
+      "type": "aggregation",
+      "query": "What are the most used learning algorithms reported across neural and evolutionary computing papers?",
+      "word_count": 703,
+      "generation_time_seconds": 18.33,
+      "actual_output_preview": "### 1. Conceptual Framework & Practical Workflow\n\nThe most utilized learning algorithms across the domains of neural and evolutionary computing encompass a variety of methodologies designed to enhance performance, convergence, and robustness in problem-solving scenarios. The algorithms discussed in ...",
+      "faithfulness": {
+        "score": 0.9412,
+        "passed": true,
+        "threshold": 0.7,
+        "reason": "The score is 0.94 because the actual output inaccurately categorizes IASA, RASA, DE, and SADE as variants of Evolutionary Algorithms, while the retrieval context simply lists them as optimization methods used in Civil Engineering. This minor discrepancy slightly affects the faithfulness of the output."
+      }
+    }
+  ]
+}
